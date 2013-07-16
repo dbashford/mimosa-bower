@@ -1,6 +1,7 @@
 "use strict"
 
 fs = require 'fs'
+path = require 'path'
 
 logger = require "logmimosa"
 wrench = require "wrench"
@@ -16,15 +17,24 @@ registration = (mimosaConfig, register) ->
   ###
 
 _bowerInstall = (mimosaConfig, options, next) ->
-  _ensureDirectory mimosaConfig
-  _install mimosaConfig, (error) ->
-    if error
-      console.error "Aborting Bower processing due to error."
-      next() if next()
-    else
-      _move mimosaConfig, ->
-        _clean mimosaConfig, ->
-          logger.success "Bower assets installed."
+  if _ensureBowerConfig mimosaConfig
+    _ensureDirectory mimosaConfig
+    _install mimosaConfig, (error) ->
+      if error
+        console.error "Aborting Bower processing due to error."
+        next() if next()
+      else
+        _move mimosaConfig, ->
+          _clean mimosaConfig, ->
+            logger.success "Bower assets installed."
+
+_ensureBowerConfig = (mimosaConfig) ->
+  try
+    require path.join mimosaConfig.root, "bower.json"
+    true
+  catch err
+    logger.error "Error reading bower.json file: ", err
+    false
 
 _ensureDirectory = (mimosaConfig, options, next) ->
   folder = mimosaConfig.bower.outputDir.path
@@ -48,6 +58,7 @@ _move = (mimosaConfig, cb) ->
 _clean = (mimosaConfig, cb) ->
   if mimosaConfig.bower.outputDir.clean
     wrench.rmdirSyncRecursive mimosaConfig.bower.outputDir.pathFull
+    logger.info "Cleaned temp bower output directory [[ #{mimosaConfig.bower.outputDir.pathFull} ]]"
   cb()
 
 registerCommand = (program, retrieveConfig) ->
