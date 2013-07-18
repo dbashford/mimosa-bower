@@ -33,30 +33,37 @@ _replacePathPieces = (mimosaConfig, aPath) ->
 
   path.join mimosaConfig.bower.bowerDir.pathFull, packagePathOutPieces.join(path.sep)
 
-transforms.vendorRoot = (mimosaConfig, resolvedPaths) ->
-  console.log "VENDOR ROOT"
+transforms.vendorRoot = (mimosaConfig, inPath) ->
+  fileName = path.basename inPath
+  if _isJavaScript inPath
+    path.join mimosaConfig.vendor.javascripts, fileName
+  else
+    path.join mimosaConfig.vendor.stylesheets, fileName
 
-transforms.packageRoot = (mimosaConfig, resolvedPaths) ->
-  console.log "PACKAGE ROOT"
+transforms.packageRoot = (mimosaConfig, inPath, lib) ->
+  fileName = path.basename inPath
+  if _isJavaScript inPath
+    path.join mimosaConfig.vendor.javascripts, lib, fileName
+  else
+    path.join mimosaConfig.vendor.stylesheets, lib, fileName
 
 transforms.packageShorten = (mimosaConfig, resolvedPaths) ->
   console.log "PACKAGE SHORTEN"
 
-transforms.none = (mimosaConfig, resolvedPaths) ->
-  copyFileConfigs = []
+transforms.none = (mimosaConfig, inPath) ->
+  modInPath = _replacePathPieces mimosaConfig, inPath
+  if _isJavaScript modInPath
+    modInPath.replace mimosaConfig.bower.bowerDir.pathFull, mimosaConfig.vendor.javascripts
+  else
+    modInPath.replace mimosaConfig.bower.bowerDir.pathFull, mimosaConfig.vendor.stylesheets
 
+module.exports = (mimosaConfig, resolvedPaths) ->
+  theTransform = transforms[mimosaConfig.bower.copy.strategy]
+  copyFileConfigs = []
   for lib, paths of resolvedPaths
     for inPath in paths
-      modInPath = _replacePathPieces mimosaConfig, inPath
-      outPath = if _isJavaScript modInPath
-        modInPath.replace mimosaConfig.bower.bowerDir.pathFull, mimosaConfig.vendor.javascripts
-      else
-        modInPath.replace mimosaConfig.bower.bowerDir.pathFull, mimosaConfig.vendor.stylesheets
-
+      outPath = theTransform mimosaConfig, inPath, lib
       copyFileConfigs.push {in:inPath, out:outPath}
 
   copyFileConfigs
-
-module.exports = (mimosaConfig, resolvedPaths) ->
-  transforms[mimosaConfig.bower.copy.strategy](mimosaConfig, resolvedPaths)
 

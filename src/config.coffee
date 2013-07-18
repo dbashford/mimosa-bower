@@ -49,7 +49,7 @@ exports.placeholder = ->
                                     # in the vendor directory in a folder named for that package.
                                     # "packageShorten" is the same as "packageRoot", except it
                                     # attempts to shorten any common folder names. If all package
-                                    # files are inside a "js" directory inside the package, this
+                                    # files are inside a "docs" directory inside the package, this
                                     # option removes that common js directory. "none" will copy
                                     # the assets into the vendor directory without modification.
         # pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
