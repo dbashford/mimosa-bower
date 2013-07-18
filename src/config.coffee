@@ -9,11 +9,10 @@ exports.defaults = ->
       clean: false
     copy:
       enabled: true
-      vendorRoot: false
+      strategy: "none"
       exclude: []
       mainOverrides: {}
-
-
+      pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
 
 exports.placeholder = ->
   """
@@ -45,10 +44,21 @@ exports.placeholder = ->
                                     # path strings representing the package's main files. The paths
                                     # should be relative to the root of the package. For example:
                                     # {"json2":["json2.js","json_parse.js"]}
-        # vendorRoot: false         # when set to true assets will be copied directly to root of
-                                    # the vendor directory. By default they will be copied to a
-                                    # directory inside the vendorRoot named for the bower package.
-                                    # Ex: vendor/backbone.js vs vendor/backbone/backbone.js
+        # strategy: "none"          # The copying strategy. "vendorRoot" places all files at the
+                                    # root of the vendor directory. "packageRoot" places the files
+                                    # in the vendor directory in a folder named for that package.
+                                    # "packageShorten" is the same as "packageRoot", except it
+                                    # attempts to shorten any common folder names. If all package
+                                    # files are inside a "js" directory inside the package, this
+                                    # option removes that common js directory. "none" will copy
+                                    # the assets into the vendor directory without modification.
+        # pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
+                                    # pathMod can be an array of strings or a regex. It is used to
+                                    # strip full pieces of a path from the output file.  So, if a
+                                    # bower package script is in "packageName/lib/js/foo.js" by
+                                    # default the output would have "lib" and "js" stripped from
+                                    # the output path. Feel free to suggest additions to this based
+                                    # on your experience!
 
 
   """
@@ -64,12 +74,36 @@ exports.validate = (config, validators) ->
       validators.ifExistsIsBoolean(errors, "bower.outputFolder.clean", b.bowerDir.clean)
     if validators.ifExistsIsObject(errors, "bower.copy", b.copy)
       validators.ifExistsIsBoolean(errors, "bower.copy.enabled", b.copy.enabled)
-      validators.ifExistsIsBoolean(errors, "bower.copy.vendorRoot", b.copy.vendorRoot)
+      if validators.ifExistsIsString(errors, "bower.copy.strategy", b.copy.strategy)
+        if ["none", "vendorRoot", "packageShorten", "packageRoot"].indexOf(b.copy.strategy) is -1
+          errors.push 'Invalid bower.copy.strategy used. Must be "none", "vendorRoot", "packageShorten", or "packageRoot".'
+
       validators.ifExistsFileExcludeWithRegexAndString(errors, "bower.copy.exclude", b.copy, b.bowerDir.pathFull)
 
       if validators.ifExistsIsObject(errors, "bower.copy.mainOverrides", b.copy.mainOverrides)
         o = b.copy.mainOverrides
         Object.keys(o).forEach (key) ->
           validators.isArrayOfStrings(errors, "bower.copy.mainOverrides values", o[key])
+
+      if b.copy.pathMod?
+        if Array.isArray b.copy.pathMod
+          notString = false
+          regexArray = []
+          for item in b.copy.pathMod
+            if typeof item is "string"
+              regexArray.push "^#{item}$"
+            else
+              notString = true
+              break
+
+          if notString
+            errors.push "bower.copy.pathMod must be a regex or an array of strings."
+          else
+            regexString = "(" + regexArray.join("|") + ")"
+            b.copy.pathMod = new RegExp(regexString)
+
+        else
+          unless b.copy.pathMod instanceof RegExp
+            errors.push "bower.copy.pathMod must be a regex or an array of strings."
 
   errors

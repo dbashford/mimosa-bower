@@ -8,6 +8,7 @@ wrench = require "wrench"
 bower = require "bower-canary"
 
 config = require './config'
+strategy = require './strategy'
 
 registration = (mimosaConfig, register) ->
   ###
@@ -131,15 +132,23 @@ _isExcluded = (copy, filePath) ->
   else
     false
 
-_moveInstalledLibs = (mimosaConfig, resolvedPaths) ->
-  console.log JSON.stringify resolvedPaths, null, 2
+_moveInstalledLibs = (copyConfigs) ->
+  for copyConfig in copyConfigs
+    outDirectory = path.dirname(copyConfig.out)
+    unless fs.existsSync outDirectory
+      wrench.mkdirSyncRecursive outDirectory, 0o0777
+
+    fileText = fs.readFileSync copyConfig.in, "utf8"
+    fs.writeFileSync copyConfig.out, fileText
+    logger.info "mimosa-bower created file [[ #{copyConfig.out} ]]"
 
 _move = (mimosaConfig, installs, cb) ->
   if installs.length > 0
     installedNames = installs.map (install) -> install.data.pkgMeta.name
     bower.commands.list({paths: true}).on 'end', (paths) ->
       resolvedPaths = _resolvePaths mimosaConfig, installedNames, paths
-      _moveInstalledLibs mimosaConfig, resolvedPaths
+      copyConfigs = strategy mimosaConfig, resolvedPaths
+      _moveInstalledLibs copyConfigs
       cb()
   else
     cb()
