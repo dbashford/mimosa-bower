@@ -13,7 +13,9 @@ Note: Version `0.14.0` or higher of Mimosa is required to use this module.
 
 ## Usage
 
-Add `'bower'` to your list of modules.  That's all!  Mimosa will install the module from NPM for you when you start up.
+Run `mimosa mod:install mimosa-bower` to install this module into your global Mimosa install.
+
+To install into a single project, add `'bower'` to your list of modules. Mimosa will install the module from NPM for you when you start up Mimosa.
 
 ## Functionality
 
@@ -28,6 +30,8 @@ If mimosa-bower encounters any version collisions, it will error out and indicat
 If mimosa-bower cannot identify the `main` file for a package because it hasn't been provided by the package author mimosa-bower will indicate that via a console log message. The `bower.copy.mainOverrides` can be used to indicate which files from the package are to use used.
 
 ## New Commands
+
+The following commands are added to Mimosa when mimosa-bower is included in a project.
 
 ### bower & bower:install
 
