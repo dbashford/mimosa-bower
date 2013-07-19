@@ -9,7 +9,7 @@ exports.defaults = ->
       clean: false
     copy:
       enabled: true
-      strategy: "none"
+      strategy: "packageRoot"
       exclude: []
       mainOverrides: {}
       pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
@@ -44,19 +44,18 @@ exports.placeholder = ->
                                     # path strings representing the package's main files. The paths
                                     # should be relative to the root of the package. For example:
                                     # {"json2":["json2.js","json_parse.js"]}
-        # strategy: "none"          # The copying strategy. "vendorRoot" places all files at the
+        # strategy: "packageRoot"   # The copying strategy. "vendorRoot" places all files at the
                                     # root of the vendor directory. "packageRoot" places the files
                                     # in the vendor directory in a folder named for that package.
                                     # "none" will copy the assets into the vendor directory without
                                     # modification.
         # pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
                                     # pathMod can be an array of strings or a regex. It is used to
-                                    # strip full pieces of a path from the output file.  So, if a
-                                    # bower package script is in "packageName/lib/js/foo.js" by
-                                    # default the output would have "lib" and "js" stripped from
-                                    # the output path. Feel free to suggest additions to this based
-                                    # on your experience!
-
+                                    # strip full pieces of a path from the output file when the
+                                    # selected strategy is "none". If a bower package script is in
+                                    # "packageName/lib/js/foo.js" by default the output would have
+                                    # "lib" and "js" stripped from the output path. Feel free to
+                                    # suggest additions to this based on your experience!
 
   """
 
@@ -73,7 +72,7 @@ exports.validate = (config, validators) ->
       validators.ifExistsIsBoolean(errors, "bower.copy.enabled", b.copy.enabled)
       if validators.ifExistsIsString(errors, "bower.copy.strategy", b.copy.strategy)
         if ["none", "vendorRoot", "packageRoot"].indexOf(b.copy.strategy) is -1
-          errors.push 'Invalid bower.copy.strategy used. Must be "none", "vendorRoot", "packageShorten", or "packageRoot".'
+          errors.push 'Invalid bower.copy.strategy used. Must be "none", "vendorRoot" or "packageRoot".'
 
       validators.ifExistsFileExcludeWithRegexAndString(errors, "bower.copy.exclude", b.copy, b.bowerDir.pathFull)
 

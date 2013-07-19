@@ -11,11 +11,8 @@ config = require './config'
 strategy = require './strategy'
 
 registration = (mimosaConfig, register) ->
-  ###
-  e = mimosaConfig.extensions
-  register ['add','update','buildFile'],      'afterCompile', _minifyJS, e.javascript
-  register ['add','update','buildExtension'], 'beforeWrite',  _minifyJS, e.template
-  ###
+  unless mimosaConfig.bower.copy.clean
+    register ['preBuild'], 'init', _bowerInstall
 
 _bowerInstall = (mimosaConfig, options, next) ->
   if _ensureBowerConfig mimosaConfig
