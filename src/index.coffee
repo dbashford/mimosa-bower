@@ -114,6 +114,7 @@ _resolvePaths = (mimosaConfig, names, paths) ->
               ###
               TODO packageJsonDetails.dependencies
               ###
+
             else
               logger.warn "Cannot determine main file for [[ #{lib} ]] at [[ #{aPath} ]]. Consider adding a mainOverrides entry."
         else

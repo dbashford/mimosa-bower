@@ -47,9 +47,6 @@ transforms.packageRoot = (mimosaConfig, inPath, lib) ->
   else
     path.join mimosaConfig.vendor.stylesheets, lib, fileName
 
-transforms.packageShorten = (mimosaConfig, resolvedPaths) ->
-  console.log "PACKAGE SHORTEN"
-
 transforms.none = (mimosaConfig, inPath) ->
   modInPath = _replacePathPieces mimosaConfig, inPath
   if _isJavaScript modInPath

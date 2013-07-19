@@ -47,11 +47,8 @@ exports.placeholder = ->
         # strategy: "none"          # The copying strategy. "vendorRoot" places all files at the
                                     # root of the vendor directory. "packageRoot" places the files
                                     # in the vendor directory in a folder named for that package.
-                                    # "packageShorten" is the same as "packageRoot", except it
-                                    # attempts to shorten any common folder names. If all package
-                                    # files are inside a "docs" directory inside the package, this
-                                    # option removes that common js directory. "none" will copy
-                                    # the assets into the vendor directory without modification.
+                                    # "none" will copy the assets into the vendor directory without
+                                    # modification.
         # pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
                                     # pathMod can be an array of strings or a regex. It is used to
                                     # strip full pieces of a path from the output file.  So, if a
@@ -75,7 +72,7 @@ exports.validate = (config, validators) ->
     if validators.ifExistsIsObject(errors, "bower.copy", b.copy)
       validators.ifExistsIsBoolean(errors, "bower.copy.enabled", b.copy.enabled)
       if validators.ifExistsIsString(errors, "bower.copy.strategy", b.copy.strategy)
-        if ["none", "vendorRoot", "packageShorten", "packageRoot"].indexOf(b.copy.strategy) is -1
+        if ["none", "vendorRoot", "packageRoot"].indexOf(b.copy.strategy) is -1
           errors.push 'Invalid bower.copy.strategy used. Must be "none", "vendorRoot", "packageShorten", or "packageRoot".'
 
       validators.ifExistsFileExcludeWithRegexAndString(errors, "bower.copy.exclude", b.copy, b.bowerDir.pathFull)
