@@ -76,7 +76,7 @@ _isPathExcluded = (copy, filePath) ->
     false
 
 exports.gatherPathConfigs = (mimosaConfig, installedNames, cb) ->
-    bower.commands.list({paths: true}).on 'end', (paths) ->
-      resolvedPaths = _resolvePaths mimosaConfig, installedNames, paths
-      copyConfigs = strategy mimosaConfig, resolvedPaths
-      cb copyConfigs
+  bower.commands.list({paths: true}).on 'end', (paths) ->
+    resolvedPaths = _resolvePaths mimosaConfig, installedNames, paths
+    copyConfigs = strategy mimosaConfig, resolvedPaths
+    cb copyConfigs

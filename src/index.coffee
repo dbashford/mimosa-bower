@@ -39,7 +39,7 @@ registerCommand = (program, retrieveConfig) ->
     .option("-D, --debug", "run in debug mode")
     .description("Run bower install")
     .action (opts) ->
-      _prepBowerInstall retrieveConfig, opts  clean.registerCommand program, retrieveConfig
+      _prepBowerInstall retrieveConfig, opts
 
   program
     .command('bower:clean')

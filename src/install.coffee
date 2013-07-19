@@ -34,7 +34,7 @@ _ensureBowerConfig = (mimosaConfig) ->
     require path.join mimosaConfig.root, "bower.json"
     true
   catch err
-    logger.error "Error reading bower.json file: ", err
+    logger.error "Unable to import bower packages: error reading bower.json file, ", err
     false
 
 _ensureDirectory = (mimosaConfig, options, next) ->
@@ -58,7 +58,7 @@ exports.bowerInstall = (mimosaConfig, options, next) ->
     _ensureDirectory mimosaConfig
     _install mimosaConfig, (error, installs) ->
       if error
-        logger.error "Aborting Bower processing due to error."
+        logger.error "Aborting Bower processing due to error: ", error
       else
         if installs.length > 0
           if mimosaConfig.bower.copy.enabled
@@ -67,5 +67,8 @@ exports.bowerInstall = (mimosaConfig, options, next) ->
               _moveInstalledLibs copyConfigs
               clean.cleanTempDir mimosaConfig
               next()
-
+        else
+          logger.info "No bower packages to install."
       next()
+  else
+    next()
