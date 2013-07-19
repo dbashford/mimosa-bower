@@ -53,9 +53,9 @@ exports.placeholder = ->
                                     # pathMod can be an array of strings or a regex. It is used to
                                     # strip full pieces of a path from the output file when the
                                     # selected strategy is "none". If a bower package script is in
-                                    # "packageName/lib/js/foo.js" by default the output would have
-                                    # "lib" and "js" stripped from the output path. Feel free to
-                                    # suggest additions to this based on your experience!
+                                    # "packageName/lib/js/foo.js" by default the output path would
+                                    # have "lib" and "js" stripped. Feel free to suggest additions
+                                    # to this based on your experience!
 
   """
 
