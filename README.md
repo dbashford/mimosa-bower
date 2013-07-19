@@ -19,15 +19,15 @@ Add `'bower'` to your list of modules.  That's all!  Mimosa will install the mod
 
 If the `bower.copy.clean` option is not selected, then mimosa-bower will run when the mimosa `build` or `watch` commands start.  At that time mimosa-bower will assess if any `bower.json` packages need to be installed from the Bower registry.  If any packages have not been installed, the will be installed, and if any versions have updated, they will be installed too. mimosa-bower installs these packages to the `bower.bowerDir.path` directory, by default `.mimosa/bower_components`.
 
-If any packages are installed, mimosa-bower then moves them into the `vendor` directories as indicated by Mimosa's `vendor` config introduced with `0.14.0`.  The `bower.copy.strategy` determines how the files are copied over.  They can be copied to the root of the vendor directory, `vendorRoot`, to the root of the component directory `packageRoot` or can be copied keeping the entire folder structure intact, `none`.
+If any packages are installed, mimosa-bower then moves them into the `vendor` directories as indicated by Mimosa's `vendor` config introduced with `0.14.0`.  The `bower.copy.strategy` determines how the files are copied over.  They can be copied to the root of the vendor directory (`vendorRoot`), to the root of the component directory (`packageRoot`, the default), or can be copied keeping the entire folder structure intact, `none`.
 
-mimosa-bower requires a valid `bower.json` to be in place.
+mimosa-bower requires a valid `bower.json` be in place.
 
 If mimosa-bower encounters any version collisions, it will error out and indicate what those collisions are.
 
 If mimosa-bower cannot identify the `main` file for a package because it hasn't been provided by the package author mimosa-bower will indicate that via a console log message. The `bower.copy.mainOverrides` can be used to indicate which files from the package are to use used.
 
-mimosa-bower also adds 2 new commands to Mimosa.
+## New Commands
 
 ### bower & bower:install
 
@@ -39,7 +39,7 @@ mimosa-bower also adds 2 new commands to Mimosa.
 
 ## Default Config
 
-```
+```coffeescript
 bower:                # Configuration for bower module
   bowerDir:
     path: ".mimosa/bower_components"  # The location mimosa-bower places temporary bower
@@ -80,7 +80,4 @@ bower:                # Configuration for bower module
                               # to this based on your experience!
 ```
 
-## Example Config
-
-```
-```
+Details forthcoming
