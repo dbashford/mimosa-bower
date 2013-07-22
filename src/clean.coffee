@@ -25,7 +25,7 @@ _removeDirs = (dirs) ->
       logger.info "Cleaned up empty bower package directory [[ #{dir} ]]"
     catch err
       unless err.code is 'ENOTEMPTY'
-        logger.error "Unable to delete directory, [[ #{dirPath} ]] :", err
+        logger.error "Unable to delete directory, [[ #{dir} ]] :", err
 
 exports.cleanTempDir = cleanTempDir = (mimosaConfig, force) ->
   if (force or mimosaConfig.bower.bowerDir.clean) and fs.existsSync mimosaConfig.bower.bowerDir.pathFull
