@@ -51,4 +51,4 @@ exports.bowerClean = (mimosaConfig) ->
       cleanTempDir mimosaConfig, true
       unless mimosaConfig.bower.copy.strategy is "vendorRoot"
         _cleanEmptyDirs mimosaConfig, packages
-      logger.success "Bower artifacts cleaned up."
+      logger.success "Bower artifacts cleaned."
