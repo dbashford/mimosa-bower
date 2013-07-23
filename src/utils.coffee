@@ -3,7 +3,7 @@
 fs = require 'fs'
 path = require 'path'
 
-bower = require "bower-canary"
+bower = require "bower"
 logger = require "logmimosa"
 
 strategy = require './strategy'

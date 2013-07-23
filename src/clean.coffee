@@ -4,7 +4,7 @@ fs = require 'fs'
 path = require 'path'
 
 _ = require 'lodash'
-bower = require "bower-canary"
+bower = require "bower"
 wrench = require "wrench"
 logger = require "logmimosa"
 
@@ -33,8 +33,14 @@ exports.cleanTempDir = cleanTempDir = (mimosaConfig, force) ->
     logger.info "Cleaned temp bower output directory [[ #{mimosaConfig.bower.bowerDir.pathFull} ]]"
 
 _cleanEmptyDirs = (mimosaConfig, packages) ->
-  jsDirs =  wrench.readdirSyncRecursive(mimosaConfig.vendor.javascripts).map (dir) -> path.join mimosaConfig.vendor.javascripts, dir
-  cssDirs = wrench.readdirSyncRecursive(mimosaConfig.vendor.stylesheets).map (dir) -> path.join mimosaConfig.vendor.stylesheets, dir
+  jsDirs = []
+  if fs.existsSync mimosaConfig.vendor.javascripts
+    jsDirs = wrench.readdirSyncRecursive(mimosaConfig.vendor.javascripts).map (dir) -> path.join mimosaConfig.vendor.javascripts, dir
+
+  cssDirs = []
+  if fs.existsSync mimosaConfig.vendor.stylesheets
+    cssDirs = wrench.readdirSyncRecursive(mimosaConfig.vendor.stylesheets).map (dir) -> path.join mimosaConfig.vendor.stylesheets, dir
+
   allDirs = _.uniq(jsDirs.concat(cssDirs))
   # eliminate any directories that do not have one of the bower package names in its path
   allDirs = allDirs.filter (dir) ->

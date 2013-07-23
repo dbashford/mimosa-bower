@@ -3,7 +3,7 @@
 path = require 'path'
 fs = require 'fs'
 
-bower = require "bower-canary"
+bower = require "bower"
 wrench = require "wrench"
 logger = require "logmimosa"
 
@@ -13,6 +13,7 @@ utils = require "./utils"
 _install = (mimosaConfig, cb) ->
   bower.config.directory = mimosaConfig.bower.bowerDir.path
   installs = []
+  logger.info "Starting Bower install..."
   bower.commands.install()
     .on('log', (log) ->
       if log.level is "action" and log.id is "install"
