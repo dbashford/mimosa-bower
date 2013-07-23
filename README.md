@@ -44,44 +44,23 @@ The following commands are added to Mimosa when mimosa-bower is included in a pr
 ## Default Config
 
 ```coffeescript
-bower:                # Configuration for bower module
+bower:
   bowerDir:
-    path: ".mimosa/bower_components"  # The location mimosa-bower places temporary bower
-                                      # assets.
-    clean: false              # whether or not to remove temporary bower assets after install
-                              # If enabled, mimosa-bower will not auto-install bower
-                              # dependencies when mimosa starts as that would cause mimosa to
-                              # install everything every time. If clean is enabled, the
-                              # "bower" command must be used to install dependencies.
-
-  copy:                       # configuration for the copying of assets from bower temp
-                              # directories into the project
-    enabled: true             # whether or not to copy the assets out of the bowerDir.path
-                              # into the project vendor location
-    exclude:[]                # An array of string paths or regexes. Files to exclude from
-                              # copying. Paths should be relative to the bowerdir.path or
-                              # absolute.
-    mainOverrides: {}         # Occasionally bower packages do not clearly indicate what file
-                              # is the main library file. In those cases, mimosa cannot find
-                              # the main files in order to copy them to the vendor directory.
-                              # json2 is a good example. This setting allows for setting
-                              # which files should be copied for a package. The key for this
-                              # object is the name of the package. The value is an array of
-                              # path strings representing the package's main files. The paths
-                              # should be relative to the root of the package. For example:
-                              # {"json2":["json2.js","json_parse.js"]}
-    strategy: "packageRoot"   # The copying strategy. "vendorRoot" places all files at the
-                              # root of the vendor directory. "packageRoot" places the files
-                              # in the vendor directory in a folder named for that package.
-                              # "none" will copy the assets into the vendor directory without
-                              # modification.
+    path: ".mimosa/bower_components"
+    clean: false
+  copy:
+    enabled: true
+    exclude:[]
+    mainOverrides: {}
+    strategy: "packageRoot"
     pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
-                              # pathMod can be an array of strings or a regex. It is used to
-                              # strip full pieces of a path from the output file when the
-                              # selected strategy is "none". If a bower package script is in
-                              # "packageName/lib/js/foo.js" by default the output path would
-                              # have "lib" and "js" stripped. Feel free to suggest additions
-                              # to this based on your experience!
 ```
 
-Details forthcoming
+* `bowerDir.path`: string, the path to where mimosa-bower will initially install bower assets before moving the key assets into the `watch.sourceDir`
+* `bowerDir.clean`: boolean, whether or not to remove temporary bower assets after install. If enabled, mimosa-bower will not auto-install bower dependencies when mimosa starts as that would cause mimosa to install everything every time. If clean is enabled, the "bower" command must be used to install dependencies.
+* `copy.enabled`: boolean, whether or not to copy assets out of the `bowerDir.path` and into `watch.sourceDir`
+* `copy.exclude`: An array of string paths or regexes. Files to exclude from
+ copying. Paths should be relative to the `bowerDir.path` or absolute.
+* `copy.mainOverrides`: Occasionally bower packages do not clearly indicate what file is the main library file. In those cases, mimosa-bower cannot find the main files to copy them to the vendor directory. json2 is a good example. `mainOverrides` allows for setting which files should be copied for a package. The key for this object is the name of the package. The value is an array of path strings representing the package's main files. The paths should be relative to the root of the package. For example: `{"json2":["json2.js","json_parse.js"]}`. The paths can also be to directories. That will include all the directory's files.
+* `copy.strategy`: string, the copying strategy. `"vendorRoot"` places all files at the root of the vendor directory. `"packageRoot"` places the files in the vendor directory in a folder named for that package. `"none"` will copy the assets into the vendor directory without modification.
+* `copy.pathMod`: pathMod can be an array of strings or a regexes. It is used to strip full pieces of a path from the output file when the selected `strategy` is `"none"`. If a bower package script is in `packageName/lib/js/foo.js` by default the output path would have "lib" and "js" stripped. Feel free to suggest additions to this based on your experience!

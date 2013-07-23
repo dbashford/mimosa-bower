@@ -37,13 +37,15 @@ exports.placeholder = ->
                                     # absolute.
         # mainOverrides: {}         # Occasionally bower packages do not clearly indicate what file
                                     # is the main library file. In those cases, mimosa cannot find
-                                    # the main files in order to copy them to the vendor directory.
-                                    # json2 is a good example. This setting allows for setting
-                                    # which files should be copied for a package. The key for this
-                                    # object is the name of the package. The value is an array of
-                                    # path strings representing the package's main files. The paths
+                                    # the main files to copy them to the vendor directory. json2 is
+                                    # a good example. mainOverrides allows for setting which files
+                                    # should be copied for a package. The key for this object is
+                                    # the name of the package. The value is an array of path
+                                    # strings representing the package's main files. The paths
                                     # should be relative to the root of the package. For example:
-                                    # {"json2":["json2.js","json_parse.js"]}
+                                    # {"json2":["json2.js","json_parse.js"]}. The paths can also
+                                    # be to directories and that will include all the directory's
+                                    # files.
         # strategy: "packageRoot"   # The copying strategy. "vendorRoot" places all files at the
                                     # root of the vendor directory. "packageRoot" places the files
                                     # in the vendor directory in a folder named for that package.
