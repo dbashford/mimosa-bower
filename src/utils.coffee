@@ -48,8 +48,11 @@ _resolvePaths = (mimosaConfig, names, paths) ->
             wrench.readdirSyncRecursive(overridePath)
               .map (filePath) ->
                 path.join overridePath, filePath
+              .filter (filePath) ->
+                fs.statSync(filePath).isFile()
               .forEach (filePath) ->
                 _addResolvedPath mimosaConfig, resolvedPaths[lib], filePath
+
           else
             _addResolvedPath mimosaConfig, resolvedPaths[lib], overridePath
         else
