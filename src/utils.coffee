@@ -42,6 +42,8 @@ _resolvePaths = (mimosaConfig, names, paths) ->
         overridePath = path.join fullLibPath, override
         if fs.existsSync overridePath
           _addResolvedPath mimosaConfig, resolvedPaths[lib], overridePath
+        else
+          logger.info "Override path listed, but does not exist in package: [[ #{overridePath} ]]"
     else
       for aPath in paths
         if fs.existsSync aPath
