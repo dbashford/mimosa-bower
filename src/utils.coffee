@@ -5,6 +5,7 @@ path = require 'path'
 
 bower = require "bower"
 logger = require "logmimosa"
+wrench = require "wrench"
 
 strategy = require './strategy'
 
@@ -41,7 +42,16 @@ _resolvePaths = (mimosaConfig, names, paths) ->
       mimosaConfig.bower.copy.mainOverrides[lib].forEach (override) ->
         overridePath = path.join fullLibPath, override
         if fs.existsSync overridePath
-          _addResolvedPath mimosaConfig, resolvedPaths[lib], overridePath
+          pathStat = fs.statSync overridePath
+          if pathStat.isDirectory()
+            # find everything in directory and include it
+            wrench.readdirSyncRecursive(overridePath)
+              .map (filePath) ->
+                path.join overridePath, filePath
+              .forEach (filePath) ->
+                _addResolvedPath mimosaConfig, resolvedPaths[lib], filePath
+          else
+            _addResolvedPath mimosaConfig, resolvedPaths[lib], overridePath
         else
           logger.info "Override path listed, but does not exist in package: [[ #{overridePath} ]]"
     else
