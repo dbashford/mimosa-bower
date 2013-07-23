@@ -18,7 +18,7 @@ _install = (mimosaConfig, cb) ->
     .on('log', (log) ->
       if log.level is "action" and log.id is "install"
         if logger.isDebug
-          logger.debug "Installed the following into #{mimosaConfig.bower.bowerDir.path}: " + log.data.pkgMeta.name
+          logger.debug "Installed the following into #{mimosaConfig.bower.bowerDir.path}: " + log.data.endpoint.name
         installs.push log
     ).on('error', (message) ->
       _logInstallErrorMessage message
@@ -64,7 +64,7 @@ exports.bowerInstall = (mimosaConfig, options, next) ->
       if installs.length > 0
         logger.debug "There were a total of [[ #{installs.length} ]] bower packages installed"
         if mimosaConfig.bower.copy.enabled
-          installedNames = installs.map (install) -> install.data.pkgMeta.name
+          installedNames = installs.map (install) -> install.data.endpoint.name
           return utils.gatherPathConfigs mimosaConfig, installedNames, (copyConfigs) ->
             if logger.isDebug
               logger.debug "Going to move the following copyConfigurations"
