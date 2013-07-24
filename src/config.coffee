@@ -9,6 +9,7 @@ exports.defaults = ->
       clean: false
     copy:
       enabled: true
+      defaultStrategy: "packageRoot" # not exposed or documented
       strategy: "packageRoot"
       exclude: []
       mainOverrides: {}
@@ -44,13 +45,18 @@ exports.placeholder = ->
                                     # strings representing the package's main files. The paths
                                     # should be relative to the root of the package. For example:
                                     # {"json2":["json2.js","json_parse.js"]}. The paths can also
-                                    # be to directories and that will include all the directory's
+                                    # be to directories. That will include all the directory's
                                     # files.
         # strategy: "packageRoot"   # The copying strategy. "vendorRoot" places all files at the
                                     # root of the vendor directory. "packageRoot" places the files
                                     # in the vendor directory in a folder named for that package.
                                     # "none" will copy the assets into the vendor directory without
-                                    # modification.
+                                    # modification.  strategy can also be an object with keys that
+                                    # match the names of packages and values of strategy types.
+                                    # When using a strategy object, the key of "*" provides a
+                                    # default strategy. If only 2 of 10 packages are specified
+                                    # the rest get the "*" strategy. If no "*" is provided,
+                                    # "packageRoot" is the assumed default.
         # pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
                                     # pathMod can be an array of strings or a regex. It is used to
                                     # strip full pieces of a path from the output file when the
@@ -60,6 +66,13 @@ exports.placeholder = ->
                                     # to this based on your experience!
 
   """
+
+strategyVal = (errors, strat) ->
+  if ["none", "vendorRoot", "packageRoot"].indexOf(strat) is -1
+    errors.push 'Invalid bower.copy.strategy used. Must be "none", "vendorRoot" or "packageRoot".'
+    false
+  else
+    true
 
 exports.validate = (config, validators) ->
   errors = []
@@ -72,9 +85,23 @@ exports.validate = (config, validators) ->
       validators.ifExistsIsBoolean(errors, "bower.outputFolder.clean", b.bowerDir.clean)
     if validators.ifExistsIsObject(errors, "bower.copy", b.copy)
       validators.ifExistsIsBoolean(errors, "bower.copy.enabled", b.copy.enabled)
-      if validators.ifExistsIsString(errors, "bower.copy.strategy", b.copy.strategy)
-        if ["none", "vendorRoot", "packageRoot"].indexOf(b.copy.strategy) is -1
-          errors.push 'Invalid bower.copy.strategy used. Must be "none", "vendorRoot" or "packageRoot".'
+
+      if typeof b.copy.strategy is "string"
+        if strategyVal errors, b.copy.strategy
+          b.copy.defaultStrategy = b.copy.strategy
+          b.copy.strategy = {}
+      else if typeof b.copy.strategy is "object" and not Array.isArray b.copy.strategy
+        Object.keys(b.copy.strategy).forEach (key) ->
+          unless typeof key is "string" and typeof b.copy.strategy[key] is "string"
+            errors.push "bower.copy.strategy object must have a string key and a string value."
+          else
+            strategyVal errors, b.copy.strategy[key]
+
+        if errors.length is 0
+          if b.copy.strategy["*"]
+            b.copy.defaultStrategy = b.copy.strategy["*"]
+      else
+        errors.push "bower.copy.strategy must be a string or an object"
 
       validators.ifExistsFileExcludeWithRegexAndString(errors, "bower.copy.exclude", b.copy, b.bowerDir.pathFull)
 

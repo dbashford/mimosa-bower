@@ -62,5 +62,26 @@ bower:
 * `copy.exclude`: An array of string paths or regexes. Files to exclude from
  copying. Paths should be relative to the `bowerDir.path` or absolute.
 * `copy.mainOverrides`: Occasionally bower packages do not clearly indicate what file is the main library file. In those cases, mimosa-bower cannot find the main files to copy them to the vendor directory. json2 is a good example. `mainOverrides` allows for setting which files should be copied for a package. The key for this object is the name of the package. The value is an array of path strings representing the package's main files. The paths should be relative to the root of the package. For example: `{"json2":["json2.js","json_parse.js"]}`. The paths can also be to directories. That will include all the directory's files.
-* `copy.strategy`: string, the copying strategy. `"vendorRoot"` places all files at the root of the vendor directory. `"packageRoot"` places the files in the vendor directory in a folder named for that package. `"none"` will copy the assets into the vendor directory without modification.
+* `copy.strategy`: string, the copying strategy. `"vendorRoot"` places all files at the root of the vendor directory. `"packageRoot"` places the files in the vendor directory in a folder named for that package. `"none"` will copy the assets into the vendor directory without modification. `strategy` can also be an object with keys that match the names of packages and values of strategy types. When using a `strategy` object, the key of `"*"` provides a default `strategy`. If only 2 of 10 packages are specified in the object, the rest get the "*" strategy. If no `"*"` is provided, `"packageRoot"` is the assumed default.
 * `copy.pathMod`: pathMod can be an array of strings or a regexes. It is used to strip full pieces of a path from the output file when the selected `strategy` is `"none"`. If a bower package script is in `packageName/lib/js/foo.js` by default the output path would have "lib" and "js" stripped. Feel free to suggest additions to this based on your experience!
+
+
+## Alternate Config
+
+This shows the alternate `strategy` configuration using specific strategy-to-package mappings.
+
+```coffeescript
+bower:
+  bowerDir:
+    path: ".mimosa/bower_components"
+    clean: false
+  copy:
+    enabled: true
+    exclude:[]
+    mainOverrides: {}
+    strategy:
+      "*": "packageRoot"
+      "jquery": "vendorRoot"
+      "requirejs": "vendorRoot"
+    pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
+```

@@ -54,10 +54,14 @@ transforms.none = (mimosaConfig, inPath) ->
   else
     modInPath.replace mimosaConfig.bower.bowerDir.pathFull, mimosaConfig.vendor.stylesheets
 
+determineTransform = (mimosaConfig, pack) ->
+  theTransform = mimosaConfig.bower.copy.strategy[pack] ? mimosaConfig.bower.copy.defaultStrategy
+  transforms[theTransform]
+
 module.exports = (mimosaConfig, resolvedPaths) ->
-  theTransform = transforms[mimosaConfig.bower.copy.strategy]
   copyFileConfigs = []
   for lib, paths of resolvedPaths
+    theTransform = determineTransform mimosaConfig, lib
     for inPath in paths
       outPath = theTransform mimosaConfig, inPath, lib
       copyFileConfigs.push {in:inPath, out:outPath}
