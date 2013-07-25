@@ -12,6 +12,8 @@ exports.defaults = ->
       defaultStrategy: "packageRoot" # not exposed or documented
       strategy: "packageRoot"
       exclude: []
+      overridesArrays: {}
+      overridesObjects: {}
       mainOverrides: {}
       pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
 
@@ -46,7 +48,12 @@ exports.placeholder = ->
                                     # should be relative to the root of the package. For example:
                                     # {"json2":["json2.js","json_parse.js"]}. The paths can also
                                     # be to directories. That will include all the directory's
-                                    # files.
+                                    # files. mainOverrides packages can also be provided an object
+                                    # in addition to string paths. The object maps input paths to
+                                    # output paths and allow for specific placement of files and
+                                    # folders. Ex {"json2":{"json2.js":"json-utils/json2.js"}. In
+                                    # this case the "json2.js" file will be placed in
+                                    # "json-utils/json2.js" in the vendor.javascripts folder.
         # strategy: "packageRoot"   # The copying strategy. "vendorRoot" places all files at the
                                     # root of the vendor directory. "packageRoot" places the files
                                     # in the vendor directory in a folder named for that package.
@@ -107,8 +114,25 @@ exports.validate = (config, validators) ->
 
       if validators.ifExistsIsObject(errors, "bower.copy.mainOverrides", b.copy.mainOverrides)
         o = b.copy.mainOverrides
-        Object.keys(o).forEach (key) ->
-          validators.isArrayOfStrings(errors, "bower.copy.mainOverrides values", o[key])
+        Object.keys(o).forEach (pack) ->
+          overrides = o[pack]
+          if validators.isArray errors, "bower.copy.mainOverrides values", overrides
+            overrides.forEach (override) ->
+              if typeof override is "string"
+                unless b.copy.overridesArrays[pack]
+                  b.copy.overridesArrays[pack] = []
+                b.copy.overridesArrays[pack].push override
+              else if type of override is "object" and not Array.isArray override
+                unless b.copy.overridesObjects[pack]
+                  b.copy.overridesObjects[pack] = {}
+
+                Object.keys(override).forEach (oKey) ->
+                  if typeof oKey is "string" and typeof override[oKey] is "string"
+                    b.copy.overridesObjects[pack] = _.extend(b.copy.overridesObjects[pack], override)
+                  else
+                    errors.push "Objects provided to bower.copy.mainOverrides package array must have keys and values of strings"
+              else
+                errors.push "Items provided as bower.copy.mainOverrides entries must be objects or strings"
 
       if b.copy.pathMod?
         if Array.isArray b.copy.pathMod

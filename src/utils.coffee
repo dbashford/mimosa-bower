@@ -38,8 +38,8 @@ _resolvePaths = (mimosaConfig, names, paths) ->
     resolvedPaths[lib] = []
     fullLibPath = path.join mimosaConfig.bower.bowerDir.pathFull, lib
 
-    if mimosaConfig.bower.copy.mainOverrides[lib]
-      mimosaConfig.bower.copy.mainOverrides[lib].forEach (override) ->
+    if mimosaConfig.bower.copy.overridesArrays[lib]
+      mimosaConfig.bower.copy.overridesArrays[lib].forEach (override) ->
         overridePath = path.join fullLibPath, override
         if fs.existsSync overridePath
           pathStat = fs.statSync overridePath
