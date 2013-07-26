@@ -36,12 +36,13 @@ _logInstallErrorMessage = (message) ->
   logger.error logMessage
 
 _ensureBowerConfig = (mimosaConfig) ->
+  bowerJsonPath = path.join mimosaConfig.root, "bower.json"
   try
-    require path.join mimosaConfig.root, "bower.json"
+    require bowerJsonPath
     logger.debug "bower.json exists"
     true
   catch err
-    logger.error "Unable to import bower packages: error reading bower.json file, ", err
+    logger.error "Error reading Bower config file [[ #{bowerJsonPath} ]]", err
     false
 
 _makeDirectory = (folder) ->

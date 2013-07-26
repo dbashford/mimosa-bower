@@ -23,7 +23,7 @@ If the `bower.copy.clean` option is not selected, then mimosa-bower will run whe
 
 If any packages are installed, mimosa-bower then moves them into the `vendor` directories as indicated by Mimosa's `vendor` config introduced with `0.14.0`.  The `bower.copy.strategy` determines how the files are copied over.  They can be copied to the root of the vendor directory (`vendorRoot`), to the root of the component directory (`packageRoot`, the default), or can be copied keeping the entire folder structure intact, `none`.
 
-mimosa-bower requires a valid `bower.json` be in place.
+mimosa-bower requires a valid `bower.json` at the root of project (in the same directory as mimosa-config).
 
 If mimosa-bower encounters any version collisions, it will error out and indicate what those collisions are.
 
