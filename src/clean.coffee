@@ -35,14 +35,19 @@ exports.cleanTempDir = cleanTempDir = (mimosaConfig, force) ->
 _cleanEmptyDirs = (mimosaConfig, packages) ->
   jsDirs = []
   if fs.existsSync mimosaConfig.vendor.javascripts
-    jsDirs = wrench.readdirSyncRecursive(mimosaConfig.vendor.javascripts).map (dir) -> path.join mimosaConfig.vendor.javascripts, dir
+    jsDirs = wrench.readdirSyncRecursive(mimosaConfig.vendor.javascripts).map (dir) ->
+      path.join mimosaConfig.vendor.javascripts, dir
 
   cssDirs = []
   if fs.existsSync mimosaConfig.vendor.stylesheets
-    cssDirs = wrench.readdirSyncRecursive(mimosaConfig.vendor.stylesheets).map (dir) -> path.join mimosaConfig.vendor.stylesheets, dir
+    cssDirs = wrench.readdirSyncRecursive(mimosaConfig.vendor.stylesheets).map (dir) ->
+      path.join mimosaConfig.vendor.stylesheets, dir
 
   allDirs = _.uniq(jsDirs.concat(cssDirs))
   # eliminate any directories that do not have one of the bower package names in its path
+  # or the outRoot
+  if mimosaConfig.bower.copy.outRoot
+    packages.push mimosaConfig.bower.copy.outRoot
   allDirs = allDirs.filter (dir) ->
     _.intersection(dir.split(path.sep), packages).length > 0
   allDirs = _.sortBy(allDirs, (dir) -> dir.length).reverse()

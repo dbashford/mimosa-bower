@@ -37,25 +37,25 @@ _replacePathPieces = (mimosaConfig, aPath) ->
 transforms.vendorRoot = (mimosaConfig, inPath) ->
   fileName = path.basename inPath
   if _isJavaScript inPath
-    path.join mimosaConfig.vendor.javascripts, fileName
+    path.join mimosaConfig.vendor.javascripts, mimosaConfig.bower.copy.outRoot, fileName
   else
-    path.join mimosaConfig.vendor.stylesheets, fileName
+    path.join mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot, fileName
 
 transforms.packageRoot = (mimosaConfig, inPath, lib) ->
   fileName = path.basename inPath
   if _isJavaScript inPath
-    path.join mimosaConfig.vendor.javascripts, lib, fileName
+    path.join mimosaConfig.vendor.javascripts, mimosaConfig.bower.copy.outRoot, mimosaConfig.bower.copy.outRoot,  lib, fileName
   else
-    path.join mimosaConfig.vendor.stylesheets, lib, fileName
+    path.join mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot,  lib, fileName
 
-transforms.none = (mimosaConfig, inPath, root = '') ->
+transforms.none = (mimosaConfig, inPath, lib) ->
   modInPath = _replacePathPieces mimosaConfig, inPath
   if _isJavaScript modInPath
-    modInPath.replace mimosaConfig.bower.bowerDir.pathFull, path.join(mimosaConfig.vendor.javascripts, root)
+    modInPath.replace mimosaConfig.bower.bowerDir.pathFull, path.join(mimosaConfig.vendor.javascripts, mimosaConfig.bower.copy.outRoot)
   else
-    modInPath.replace mimosaConfig.bower.bowerDir.pathFull, path.join(mimosaConfig.vendor.stylesheets, root)
+    modInPath.replace mimosaConfig.bower.bowerDir.pathFull, path.join(mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot)
 
-transforms.custom = (mimosaConfig, lib, inPath, root = '') ->
+transforms.custom = (mimosaConfig, lib, inPath) ->
   modInPath = _replacePathPieces mimosaConfig, inPath
 
   # nuke the bowerDir path
@@ -81,9 +81,9 @@ transforms.custom = (mimosaConfig, lib, inPath, root = '') ->
 
   # now put it all together
   if _isJavaScript modInPath
-    path.join path.join(mimosaConfig.vendor.javascripts, root), modInPath
+    path.join path.join(mimosaConfig.vendor.javascripts, mimosaConfig.bower.copy.outRoot), modInPath
   else
-    path.join path.join(mimosaConfig.vendor.stylesheets, root), modInPath
+    path.join path.join(mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot), modInPath
 
 determineTransform = (mimosaConfig, pack) ->
   theTransform = mimosaConfig.bower.copy.strategy[pack] ? mimosaConfig.bower.copy.defaultStrategy

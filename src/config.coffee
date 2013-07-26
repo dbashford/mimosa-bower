@@ -12,6 +12,7 @@ exports.defaults = ->
       clean: false
     copy:
       enabled: true
+      outRoot: null
       defaultStrategy: "packageRoot" # not exposed or documented
       strategy: "packageRoot"
       exclude: []
@@ -38,6 +39,10 @@ exports.placeholder = ->
                                     # directories into the project
         # enabled: true             # whether or not to copy the assets out of the bowerDir.path
                                     # into the project vendor location
+        # outRoot: null             # A string path to append to the vendor directory before
+                                    # copying in assets.  All copied assets would go inside this
+                                    # directory. Example: "bower-managed". null means no outRoot
+                                    # is applied.
         # exclude:[]                # An array of string paths or regexes. Files to exclude from
                                     # copying. Paths should be relative to the bowerdir.path or
                                     # absolute.
@@ -97,6 +102,11 @@ exports.validate = (config, validators) ->
       validators.ifExistsIsBoolean(errors, "bower.outputFolder.clean", b.bowerDir.clean)
     if validators.ifExistsIsObject(errors, "bower.copy", b.copy)
       validators.ifExistsIsBoolean(errors, "bower.copy.enabled", b.copy.enabled)
+
+      if b.copy.outRoot is null
+        b.copy.outRoot = ''
+      else unless typeof b.copy.outRoot is "string"
+        errors.push "bower.copy.outRoot must be a string or null."
 
       if typeof b.copy.strategy is "string"
         if strategyVal errors, b.copy.strategy

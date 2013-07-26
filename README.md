@@ -50,6 +50,7 @@ bower:
     clean: false
   copy:
     enabled: true
+    outRoot: null
     exclude:[]
     mainOverrides: {}
     strategy: "packageRoot"
@@ -59,6 +60,7 @@ bower:
 * `bowerDir.path`: string, the path to where mimosa-bower will initially install bower assets before moving the key assets into the `watch.sourceDir`
 * `bowerDir.clean`: boolean, whether or not to remove temporary bower assets after install. If enabled, mimosa-bower will not auto-install bower dependencies when mimosa starts as that would cause mimosa to install everything every time. If clean is enabled, the "bower" command must be used to install dependencies.
 * `copy.enabled`: boolean, whether or not to copy assets out of the `bowerDir.path` and into `watch.sourceDir`
+* `copy.outRoot`: A string path to append to the `vendor` directories before copying in assets. All copied assets would go inside this directory. Example: `"bower-managed"`. `null` means no outRoot is applied. `null` is the default.
 * `copy.exclude`: An array of string paths or regexes. Files to exclude from
  copying. Paths should be relative to the `bowerDir.path` or absolute.
 * `copy.mainOverrides`: Occasionally bower packages do not clearly indicate what file is the main library file. In those cases, mimosa-bower cannot find the main files to copy them to the vendor directory. json2 is a good example. `mainOverrides` allows for setting which files should be copied for a package. The key for this object is the name of the package. The value is an array of path strings representing the package's main files. The paths should be relative to the root of the package. For example: `{"json2":["json2.js","json_parse.js"]}`. The paths can also be to directories. That will include all the directory's files.
