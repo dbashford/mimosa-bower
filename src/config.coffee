@@ -2,6 +2,9 @@
 
 path = require "path"
 
+_ = require "lodash"
+logger = require "logmimosa"
+
 exports.defaults = ->
   bower:
     bowerDir:
@@ -84,6 +87,8 @@ strategyVal = (errors, strat) ->
 exports.validate = (config, validators) ->
   errors = []
 
+  logger.debug "Beginning bower validate"
+
   if validators.ifExistsIsObject(errors, "bower config", config.bower)
     b = config.bower
     if validators.ifExistsIsObject(errors, "bower.bowerDir", b.bowerDir)
@@ -122,7 +127,7 @@ exports.validate = (config, validators) ->
                 unless b.copy.overridesArrays[pack]
                   b.copy.overridesArrays[pack] = []
                 b.copy.overridesArrays[pack].push override
-              else if type of override is "object" and not Array.isArray override
+              else if typeof override is "object" and not Array.isArray override
                 unless b.copy.overridesObjects[pack]
                   b.copy.overridesObjects[pack] = {}
 
@@ -154,5 +159,7 @@ exports.validate = (config, validators) ->
         else
           unless b.copy.pathMod instanceof RegExp
             errors.push "bower.copy.pathMod must be a regex or an array of strings."
+
+  logger.debug "Ending bower validate"
 
   errors

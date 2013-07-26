@@ -3,6 +3,7 @@
 path = require 'path'
 
 _ = require 'lodash'
+logger = require 'logmimosa'
 
 transforms = {}
 
@@ -47,12 +48,42 @@ transforms.packageRoot = (mimosaConfig, inPath, lib) ->
   else
     path.join mimosaConfig.vendor.stylesheets, lib, fileName
 
-transforms.none = (mimosaConfig, inPath) ->
+transforms.none = (mimosaConfig, inPath, root = '') ->
   modInPath = _replacePathPieces mimosaConfig, inPath
   if _isJavaScript modInPath
-    modInPath.replace mimosaConfig.bower.bowerDir.pathFull, mimosaConfig.vendor.javascripts
+    modInPath.replace mimosaConfig.bower.bowerDir.pathFull, path.join(mimosaConfig.vendor.javascripts, root)
   else
-    modInPath.replace mimosaConfig.bower.bowerDir.pathFull, mimosaConfig.vendor.stylesheets
+    modInPath.replace mimosaConfig.bower.bowerDir.pathFull, path.join(mimosaConfig.vendor.stylesheets, root)
+
+transforms.custom = (mimosaConfig, lib, inPath, root = '') ->
+  modInPath = _replacePathPieces mimosaConfig, inPath
+
+  # nuke the bowerDir path
+  modInPath = modInPath.replace mimosaConfig.bower.bowerDir.pathFull + path.sep, ''
+
+  # nuke the lib root if it is there
+  modInPath = modInPath.replace lib + path.sep, ''
+
+  # retrieve override object for lib
+  overrideObject = mimosaConfig.bower.copy.overridesObjects[lib]
+
+  # the leading edge of the path should now match one of the overrides in the object
+  matchedOverride = null
+  Object.keys(overrideObject).forEach (oKey) ->
+    if modInPath.indexOf(oKey) is 0
+      matchedOverride = oKey
+
+  # found nothing, uh oh, bad config
+  return unless matchedOverride
+
+  # do straight path replacement at leading edge
+  modInPath = modInPath.replace matchedOverride, overrideObject[matchedOverride]
+
+  # now put it all together
+  if _isJavaScript modInPath
+    path.join path.join(mimosaConfig.vendor.javascripts, root), modInPath
+  else
+    path.join path.join(mimosaConfig.vendor.stylesheets, root), modInPath
 
 determineTransform = (mimosaConfig, pack) ->
   theTransform = mimosaConfig.bower.copy.strategy[pack] ? mimosaConfig.bower.copy.defaultStrategy
@@ -63,8 +94,16 @@ module.exports = (mimosaConfig, resolvedPaths) ->
   for lib, paths of resolvedPaths
     theTransform = determineTransform mimosaConfig, lib
     for inPath in paths
-      outPath = theTransform mimosaConfig, inPath, lib
-      copyFileConfigs.push {in:inPath, out:outPath}
+      if inPath.indexOf("!!") > -1
+        inPathPieces = inPath.split("!!")
+        outPath = transforms.custom mimosaConfig, inPathPieces[0], inPathPieces[1]
+        if outPath
+          copyFileConfigs.push {in:inPathPieces[1], out:outPath}
+        else
+          logger.warn "Could not determine output path for [[ #{inPathPieces[1]} ]]"
+      else
+        outPath = theTransform mimosaConfig, inPath, lib
+        copyFileConfigs.push {in:inPath, out:outPath}
 
   copyFileConfigs
 

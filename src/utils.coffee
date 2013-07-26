@@ -28,6 +28,26 @@ _handlePackageJson = (aPath) ->
 
     details
 
+_processOverridesList = (mimosaConfig, overrides, libPath, resolvedPaths, lib) ->
+  if overrides? and overrides.length > 0
+    overrides.forEach (override) ->
+      overridePath = path.join libPath, override
+      if fs.existsSync overridePath
+        pathStat = fs.statSync overridePath
+        if pathStat.isDirectory()
+          # find everything in directory and include it
+          wrench.readdirSyncRecursive(overridePath)
+            .map (filePath) ->
+              path.join overridePath, filePath
+            .filter (filePath) ->
+              fs.statSync(filePath).isFile()
+            .forEach (filePath) ->
+              _addResolvedPath mimosaConfig, resolvedPaths, filePath, lib
+        else
+          _addResolvedPath mimosaConfig, resolvedPaths, overridePath, lib
+      else
+        logger.info "Override path listed, but does not exist in package: [[ #{overridePath} ]]"
+
 _resolvePaths = (mimosaConfig, names, paths) ->
   installedPaths = {}
   names.forEach (name) ->
@@ -38,25 +58,13 @@ _resolvePaths = (mimosaConfig, names, paths) ->
     resolvedPaths[lib] = []
     fullLibPath = path.join mimosaConfig.bower.bowerDir.pathFull, lib
 
-    if mimosaConfig.bower.copy.overridesArrays[lib]
-      mimosaConfig.bower.copy.overridesArrays[lib].forEach (override) ->
-        overridePath = path.join fullLibPath, override
-        if fs.existsSync overridePath
-          pathStat = fs.statSync overridePath
-          if pathStat.isDirectory()
-            # find everything in directory and include it
-            wrench.readdirSyncRecursive(overridePath)
-              .map (filePath) ->
-                path.join overridePath, filePath
-              .filter (filePath) ->
-                fs.statSync(filePath).isFile()
-              .forEach (filePath) ->
-                _addResolvedPath mimosaConfig, resolvedPaths[lib], filePath
-
-          else
-            _addResolvedPath mimosaConfig, resolvedPaths[lib], overridePath
-        else
-          logger.info "Override path listed, but does not exist in package: [[ #{overridePath} ]]"
+    if mimosaConfig.bower.copy.mainOverrides[lib]
+      logger.debug "Lib [[ #{lib} ]] has overrides"
+      overridesArray = mimosaConfig.bower.copy.overridesArrays[lib]
+      _processOverridesList mimosaConfig, overridesArray, fullLibPath, resolvedPaths[lib]
+      overridesObjectPaths = if mimosaConfig.bower.copy.overridesObjects[lib]
+        Object.keys(mimosaConfig.bower.copy.overridesObjects[lib])
+      _processOverridesList mimosaConfig, overridesObjectPaths, fullLibPath, resolvedPaths[lib], lib
     else
       for aPath in paths
         if fs.existsSync aPath
@@ -78,9 +86,14 @@ _resolvePaths = (mimosaConfig, names, paths) ->
           _addResolvedPath mimosaConfig, resolvedPaths[lib], path.join(fullLibPath, aPath)
   resolvedPaths
 
-_addResolvedPath = (mimosaConfig, pathArray, thePath) ->
+_addResolvedPath = (mimosaConfig, pathArray, thePath, prependPack) ->
   unless _isPathExcluded(mimosaConfig.bower.copy, thePath)
-    pathArray.push thePath
+    # if package path override, then add package as signal to transform later
+    if prependPack
+      thePath = "#{prependPack}!!#{thePath}"
+
+    unless pathArray.indexOf(thePath) > -1
+      pathArray.push thePath
 
 _isPathExcluded = (copy, filePath) ->
   if copy.excludeRegex? and filePath.match copy.excludeRegex
