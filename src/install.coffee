@@ -53,10 +53,11 @@ _makeDirectory = (folder) ->
 _moveInstalledLibs = (copyConfigs) ->
   for copyConfig in copyConfigs
     logger.debug "Going to create file [[ #{copyConfig.out} ]]"
-    _makeDirectory path.dirname(copyConfig.out)
-    fileText = fs.readFileSync copyConfig.in, "utf8"
-    fs.writeFileSync copyConfig.out, fileText
-    logger.info "mimosa-bower created file [[ #{copyConfig.out} ]]"
+    for outFile in copyConfig.out
+      _makeDirectory path.dirname outFile
+      fileText = fs.readFileSync copyConfig.in, "utf8"
+      fs.writeFileSync outFile, fileText
+      logger.info "mimosa-bower created file [[ #{outFile} ]]"
 
 exports.bowerInstall = (mimosaConfig, options, next) ->
   if _ensureBowerConfig mimosaConfig

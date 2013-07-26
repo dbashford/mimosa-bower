@@ -12,11 +12,12 @@ utils = require './utils'
 
 _cleanInstalledLibs = (copyConfigs) ->
   for copyConfig in copyConfigs
-    try
-      fs.unlinkSync copyConfig.out
-      logger.info "Removed file [[ #{copyConfig.out} ]]"
-    catch err
-      logger.warn "Unable to clean file [[ #{copyConfig.out} ]], was it moved from this location?"
+    for outFile in copyConfig.out
+      try
+        fs.unlinkSync outFile
+        logger.info "Removed file [[ #{outFile} ]]"
+      catch err
+        logger.warn "Unable to clean file [[ #{outFile} ]], was it moved from this location?"
 
 _removeDirs = (dirs) ->
   for dir in dirs

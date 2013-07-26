@@ -68,22 +68,23 @@ transforms.custom = (mimosaConfig, lib, inPath) ->
   overrideObject = mimosaConfig.bower.copy.overridesObjects[lib]
 
   # the leading edge of the path should now match one of the overrides in the object
-  matchedOverride = null
+  matchedOverrides = []
   Object.keys(overrideObject).forEach (oKey) ->
     if modInPath.indexOf(oKey) is 0
-      matchedOverride = oKey
+      matchedOverrides.push oKey
 
   # found nothing, uh oh, bad config
-  return unless matchedOverride
+  return if matchedOverrides.length is 0
 
-  # do straight path replacement at leading edge
-  modInPath = modInPath.replace matchedOverride, overrideObject[matchedOverride]
+  for matchedOverride in matchedOverrides
+    # do straight path replacement at leading edge
+    modPath = modInPath.replace matchedOverride, overrideObject[matchedOverride]
 
-  # now put it all together
-  if _isJavaScript modInPath
-    path.join path.join(mimosaConfig.vendor.javascripts, mimosaConfig.bower.copy.outRoot), modInPath
-  else
-    path.join path.join(mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot), modInPath
+    # now put it all together
+    if _isJavaScript modPath
+      path.join path.join(mimosaConfig.vendor.javascripts, mimosaConfig.bower.copy.outRoot), modPath
+    else
+      path.join path.join(mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot), modPath
 
 determineTransform = (mimosaConfig, pack) ->
   theTransform = mimosaConfig.bower.copy.strategy[pack] ? mimosaConfig.bower.copy.defaultStrategy
@@ -103,7 +104,7 @@ module.exports = (mimosaConfig, resolvedPaths) ->
           logger.warn "Could not determine output path for [[ #{inPathPieces[1]} ]]"
       else
         outPath = theTransform mimosaConfig, inPath, lib
-        copyFileConfigs.push {in:inPath, out:outPath}
+        copyFileConfigs.push {in:inPath, out:[outPath]}
 
   copyFileConfigs
 
