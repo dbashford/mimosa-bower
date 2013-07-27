@@ -9,7 +9,7 @@ exports.defaults = ->
   bower:
     bowerDir:
       path: ".mimosa/bower_components"
-      clean: false
+      clean: true
     copy:
       enabled: true
       outRoot: null
@@ -29,11 +29,7 @@ exports.placeholder = ->
       # bowerDir:
         # path: ".mimosa/bower_components"  # The location mimosa-bower places temporary bower
                                             # assets.
-        # clean: false              # whether or not to remove temporary bower assets after install
-                                    # If enabled, mimosa-bower will not auto-install bower
-                                    # dependencies when mimosa starts as that would cause mimosa to
-                                    # install everything every time. If clean is enabled, the
-                                    # "bower" command must be used to install dependencies.
+        # clean: true              # whether or not to remove temporary bower assets after install
 
       # copy:                       # configuration for the copying of assets from bower temp
                                     # directories into the project

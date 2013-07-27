@@ -7,8 +7,7 @@ clean = require './clean'
 install = require './install'
 
 registration = (mimosaConfig, register) ->
-  unless mimosaConfig.bower.copy.clean
-    register ['preBuild'], 'init', install.bowerInstall
+  register ['preBuild'], 'init', install.bowerInstall
 
 _debug = (opts) ->
   if opts.debug

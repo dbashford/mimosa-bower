@@ -19,7 +19,13 @@ To install into a single project, add `'bower'` to your list of modules. Mimosa 
 
 ## Functionality
 
-If the `bower.copy.clean` option is not selected, then mimosa-bower will run when the mimosa `build` or `watch` commands start.  At that time mimosa-bower will assess if any `bower.json` packages need to be installed from the Bower registry.  If any packages have not been installed, the will be installed, and if any versions have updated, they will be installed too. mimosa-bower installs these packages to the `bower.bowerDir.path` directory, by default `.mimosa/bower_components`.
+When `mimosa bower`, `mimosa watch` or `mimosa build` are run, mimosa-bower will assess whether or not any packages need to be installed.  mimosa-bower keeps track of two artifacts to help it determine if installs need to occur.  First, is keeps track of the `bower.json` that was last used for an install. If the current `bower.json` is different, an install will be executed. Second,  mimosa-bower keeps track of the `bower` section of your project's mimosa-config for the last install. If it changes, an install will be executed.
+
+When the install runs, if `bower.copy.clean` is set to `false`, Bower also check to see if an install is necessary. If it detects that nothing has changed, no install will be run.
+
+If `bower.copy.clean` is set to `true`, then whenever a change is detected in the configuration files, a full install will be executed. This may not result in any changes if files are installed on top of their identical copies.
+
+mimosa-bower installs packages to the `bower.bowerDir.path` directory, by default `.mimosa/bower_components`.
 
 If any packages are installed, mimosa-bower then moves them into the `vendor` directories as indicated by Mimosa's `vendor` config introduced with `0.14.0`.  The `bower.copy.strategy` determines how the files are copied over.  They can be copied to the root of the vendor directory (`vendorRoot`), to the root of the component directory (`packageRoot`, the default), or can be copied keeping the entire folder structure intact, `none`.
 
@@ -47,7 +53,7 @@ The following commands are added to Mimosa when mimosa-bower is included in a pr
 bower:
   bowerDir:
     path: ".mimosa/bower_components"
-    clean: false
+    clean: true
   copy:
     enabled: true
     outRoot: null
@@ -58,7 +64,7 @@ bower:
 ```
 
 * `bowerDir.path`: string, the path to where mimosa-bower will initially install bower assets before moving the key assets into the `watch.sourceDir`
-* `bowerDir.clean`: boolean, whether or not to remove temporary bower assets after install. If enabled, mimosa-bower will not auto-install bower dependencies when mimosa starts as that would cause mimosa to install everything every time. If clean is enabled, the "bower" command must be used to install dependencies.
+* `bowerDir.clean`: boolean, whether or not to remove temporary bower assets after install.
 * `copy.enabled`: boolean, whether or not to copy assets out of the `bowerDir.path` and into `watch.sourceDir`
 * `copy.outRoot`: A string path to append to the `vendor` directories before copying in assets. All copied assets would go inside this directory. Example: `"bower-managed"`. `null` means no outRoot is applied. `null` is the default.
 * `copy.exclude`: An array of string paths or regexes. Files to exclude from
