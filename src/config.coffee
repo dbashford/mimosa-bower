@@ -12,6 +12,7 @@ exports.defaults = ->
       clean: true
     copy:
       enabled: true
+      trackChanges: true
       outRoot: null
       defaultStrategy: "packageRoot" # not exposed or documented
       strategy: "packageRoot"
@@ -35,6 +36,14 @@ exports.placeholder = ->
                                     # directories into the project
         # enabled: true             # whether or not to copy the assets out of the bowerDir.path
                                     # into the project vendor location
+        # trackChanges: true        # When set to true, mimosa-bower will keep track of your
+                                    # bower.json and mimosa-config "bower" configuration and kick
+                                    # off installs based on changes. When set to false, bower's
+                                    # default checking is used. This is based on the contents of
+                                    # bowerDir.path. If bowerDir.clean is true, and trackChanges is
+                                    # false, mimosa-bower will not perform installs during "watch"
+                                    # and "build" because installs would occur every time mimosa
+                                    # starts up.
         # outRoot: null             # A string path to append to the vendor directory before
                                     # copying in assets.  All copied assets would go inside this
                                     # directory. Example: "bower-managed". null means no outRoot
@@ -98,6 +107,7 @@ exports.validate = (config, validators) ->
       validators.ifExistsIsBoolean(errors, "bower.outputFolder.clean", b.bowerDir.clean)
     if validators.ifExistsIsObject(errors, "bower.copy", b.copy)
       validators.ifExistsIsBoolean(errors, "bower.copy.enabled", b.copy.enabled)
+      validators.ifExistsIsBoolean(errors, "bower.copy.trackChanges", b.copy.trackChanges)
 
       if b.copy.outRoot is null
         b.copy.outRoot = ''

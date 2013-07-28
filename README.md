@@ -3,7 +3,7 @@ mimosa-bower
 
 ## Overview
 
-This module provides [Bower](http://bower.io) support to Mimosa. It allows for installing of Bower packages and moving of those packages to the appropriate location in a Mimosa application.  This module was coded against `bower-canary`, so is targeted for the 1.0 release of Bower.
+This module provides [Bower](http://bower.io) support to Mimosa. It allows for installing of Bower packages and moving of those packages to the appropriate location in a Mimosa application. This module is targeted for the 1.0 release of Bower.
 
 For more information regarding Mimosa, see http://mimosajs.com
 
@@ -19,15 +19,15 @@ To install into a single project, add `'bower'` to your list of modules. Mimosa 
 
 ## Functionality
 
-When `mimosa bower`, `mimosa watch` or `mimosa build` are run, mimosa-bower will assess whether or not any packages need to be installed.  mimosa-bower keeps track of two artifacts to help it determine if installs need to occur.  First, is keeps track of the `bower.json` that was last used for an install. If the current `bower.json` is different, an install will be executed. Second,  mimosa-bower keeps track of the `bower` section of your project's mimosa-config for the last install. If it changes, an install will be executed.
+When `mimosa bower`, `mimosa watch` or `mimosa build` are run, mimosa-bower will assess whether or not any packages need to be installed.  mimosa-bower installs packages to the `bower.bowerDir.path` directory, by default `.mimosa/bower_components`.
 
-When the install runs, if `bower.copy.clean` is set to `false`, Bower also check to see if an install is necessary. If it detects that nothing has changed, no install will be run.
+If `bower.copy.trackChanges` is set to `true` (the default), mimosa-bower keeps track of two artifacts to help it determine if installs need to occur.  First, it keeps track of the `bower.json` that was last used for an install. If the current `bower.json` is different, an install will be executed. Second,  mimosa-bower keeps track of the `bower` section of your project's mimosa-config for the last install. If it changes, an install will be executed.
 
-If `bower.copy.clean` is set to `true`, then whenever a change is detected in the configuration files, a full install will be executed. This may not result in any changes if files are installed on top of their identical copies.
+If `bower.copy.trackChanges` is set to `false` and `bower.bowerDir.clean` is set to `false`, Bower `1.0`'s default processing will check to see if an install is necessary based on the contents of the `bower.bowerDir.path`. If it detects that nothing has changed, no install will be run.
 
-mimosa-bower installs packages to the `bower.bowerDir.path` directory, by default `.mimosa/bower_components`.
+If `bower.copy.trackChanges` is set to `false` and `bower.bowerDir.clean` is set to `true` (not recommended), then mimosa-bower has no way to determine if an install is necessary so mimosa-bower does not register itself to be run during `mimosa watch` and `mimosa build`. In this case it must be executed using the `mimosa bower` command.
 
-If any packages are installed, mimosa-bower then moves them into the `vendor` directories as indicated by Mimosa's `vendor` config introduced with `0.14.0`.  The `bower.copy.strategy` determines how the files are copied over.  They can be copied to the root of the vendor directory (`vendorRoot`), to the root of the component directory (`packageRoot`, the default), or can be copied keeping the entire folder structure intact, `none`.
+If any packages are installed, mimosa-bower then moves them into the `vendor` directories as indicated by Mimosa's `vendor` config introduced with Mimosa `0.14.0`. The `bower.copy.strategy` determines how the files are copied over.  They can be copied to the root of the vendor directory (`vendorRoot`), to the root of the component directory (`packageRoot`, the default), or can be copied keeping the entire folder structure intact, `none`.
 
 mimosa-bower requires a valid `bower.json` at the root of project (in the same directory as mimosa-config).
 
@@ -41,7 +41,7 @@ The following commands are added to Mimosa when mimosa-bower is included in a pr
 
 ### bower & bower:install
 
-`bower` and `bower:install` are identical commands. These commands provide one off access to Bower installs without kicking off `watch` or `build`.  If `bower.copy.clean` is set to `true`, this command is the only way to install Bower dependencies.
+`bower` and `bower:install` are identical commands. These commands provide one off access to Bower installs without kicking off `watch` or `build`.  If `bower.bowerDir.clean` is set to `true`, this command is the only way to install Bower dependencies.
 
 ### bower:clean
 
@@ -56,6 +56,7 @@ bower:
     clean: true
   copy:
     enabled: true
+    trackChanges: true
     outRoot: null
     exclude:[]
     mainOverrides: {}
@@ -66,6 +67,7 @@ bower:
 * `bowerDir.path`: string, the path to where mimosa-bower will initially install bower assets before moving the key assets into the `watch.sourceDir`
 * `bowerDir.clean`: boolean, whether or not to remove temporary bower assets after install.
 * `copy.enabled`: boolean, whether or not to copy assets out of the `bowerDir.path` and into `watch.sourceDir`
+* `copy.trackChanges`: When set to `true`, mimosa-bower will keep track of your `bower.json` and mimosa-config `bower` configuration and kick off installs if it detects changes. When set to `false`, bower's default checking is used. The Bower default checking is based on the contents of `bowerDir.path`. If `bowerDir.clean` is `true` and `trackChanges` is `false`, mimosa-bower will not perform installs during `watch` and `build` because installs would occur every time Mimosa starts up.
 * `copy.outRoot`: A string path to append to the `vendor` directories before copying in assets. All copied assets would go inside this directory. Example: `"bower-managed"`. `null` means no outRoot is applied. `null` is the default.
 * `copy.exclude`: An array of string paths or regexes. Files to exclude from
  copying. Paths should be relative to the `bowerDir.path` or absolute.
@@ -79,12 +81,7 @@ bower:
 
 ```coffeescript
 bower:
-  bowerDir:
-    path: ".mimosa/bower_components"
-    clean: false
   copy:
-    enabled: true
-    exclude:[]
     mainOverrides:
       foundation: [
         "js/foundation"
@@ -94,8 +91,8 @@ bower:
       "*": "packageRoot"
       "jquery": "vendorRoot"
       "requirejs": "vendorRoot"
-    pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
 ```
 
+* Only default overrides are shown.
 * This shows the alternate `strategy` configuration using specific strategy-to-package mappings.
 * It also shows the alternate `mainOverrides` configuration, with the `foundation` package's `js/foundation` folder being pulled in according to the `"*"` strategy (`packageRoot`), and the `foundation/scss` folder being pulled into a `foundation` folder and otherwise left entirely in tact without any path manipulations.

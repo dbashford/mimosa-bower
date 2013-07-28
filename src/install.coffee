@@ -9,6 +9,7 @@ logger = require "logmimosa"
 
 clean = require "./clean"
 utils = require "./utils"
+track = require "./track"
 
 _install = (mimosaConfig, cb) ->
   bower.config.directory = mimosaConfig.bower.bowerDir.path
@@ -45,23 +46,18 @@ _ensureBowerConfig = (mimosaConfig) ->
     logger.error "Error reading Bower config file [[ #{bowerJsonPath} ]]", err
     false
 
-_makeDirectory = (folder) ->
-  unless fs.existsSync folder
-    logger.debug "Making folder [[ #{folder} ]]"
-    wrench.mkdirSyncRecursive folder, 0o0777
-
 _moveInstalledLibs = (copyConfigs) ->
   for copyConfig in copyConfigs
     logger.debug "Going to create file [[ #{copyConfig.out} ]]"
     for outFile in copyConfig.out
-      _makeDirectory path.dirname outFile
+      utils.makeDirectory path.dirname outFile
       fileText = fs.readFileSync copyConfig.in, "utf8"
       fs.writeFileSync outFile, fileText
       logger.info "mimosa-bower created file [[ #{outFile} ]]"
 
 exports.bowerInstall = (mimosaConfig, options, next) ->
   if _ensureBowerConfig mimosaConfig
-    _makeDirectory mimosaConfig.bower.bowerDir.path
+    utils.makeDirectory mimosaConfig.bower.bowerDir.path
     _install mimosaConfig, (installs) ->
       if installs.length > 0
         logger.debug "There were a total of [[ #{installs.length} ]] bower packages installed"
@@ -74,6 +70,10 @@ exports.bowerInstall = (mimosaConfig, options, next) ->
 
             _moveInstalledLibs copyConfigs
             clean.cleanTempDir mimosaConfig
+
+            if mimosaConfig.bower.copy.trackChanges
+              track.track mimosaConfig
+
             next()
       else
         logger.info "No bower packages to install."
