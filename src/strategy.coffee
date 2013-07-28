@@ -44,9 +44,9 @@ transforms.vendorRoot = (mimosaConfig, inPath) ->
 transforms.packageRoot = (mimosaConfig, inPath, lib) ->
   fileName = path.basename inPath
   if _isJavaScript inPath
-    path.join mimosaConfig.vendor.javascripts, mimosaConfig.bower.copy.outRoot, mimosaConfig.bower.copy.outRoot,  lib, fileName
+    path.join mimosaConfig.vendor.javascripts, mimosaConfig.bower.copy.outRoot, lib, fileName
   else
-    path.join mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot,  lib, fileName
+    path.join mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot, lib, fileName
 
 transforms.none = (mimosaConfig, inPath, lib) ->
   modInPath = _replacePathPieces mimosaConfig, inPath
