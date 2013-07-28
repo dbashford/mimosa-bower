@@ -56,27 +56,35 @@ _moveInstalledLibs = (copyConfigs) ->
       logger.info "mimosa-bower created file [[ #{outFile} ]]"
 
 exports.bowerInstall = (mimosaConfig, options, next) ->
-  if _ensureBowerConfig mimosaConfig
-    utils.makeDirectory mimosaConfig.bower.bowerDir.path
-    _install mimosaConfig, (installs) ->
-      if installs.length > 0
-        logger.debug "There were a total of [[ #{installs.length} ]] bower packages installed"
-        if mimosaConfig.bower.copy.enabled
-          installedNames = installs.map (install) -> install.data.endpoint.name
-          return utils.gatherPathConfigs mimosaConfig, installedNames, (copyConfigs) ->
-            if logger.isDebug
-              logger.debug "Going to move the following copyConfigurations"
-              logger.debug JSON.stringify copyConfigs, null, 2
+  hasBowerConfig = _ensureBowerConfig mimosaConfig
+  unless hasBowerConfig
+    next() if next
+    return
 
-            _moveInstalledLibs copyConfigs
-            clean.cleanTempDir mimosaConfig
+  if mimosaConfig.bower.copy.trackChanges
+    unless track.isInstallNeeded mimosaConfig
+      logger.info "No Bower installs needed."
+      next() if next
+      return
 
-            if mimosaConfig.bower.copy.trackChanges
-              track.track mimosaConfig
+  utils.makeDirectory mimosaConfig.bower.bowerDir.path
+  _install mimosaConfig, (installs) ->
+    if installs.length > 0
+      logger.debug "There were a total of [[ #{installs.length} ]] bower packages installed"
+      if mimosaConfig.bower.copy.enabled
+        installedNames = installs.map (install) -> install.data.endpoint.name
+        return utils.gatherPathConfigs mimosaConfig, installedNames, (copyConfigs) ->
+          if logger.isDebug
+            logger.debug "Going to move the following copyConfigurations"
+            logger.debug JSON.stringify copyConfigs, null, 2
 
-            next()
-      else
-        logger.info "No bower packages to install."
-        next()
-  else
-    next()
+          _moveInstalledLibs copyConfigs
+          clean.cleanTempDir mimosaConfig
+
+          if mimosaConfig.bower.copy.trackChanges
+            track.track mimosaConfig
+
+          next() if next
+    else
+      logger.info "No bower packages to install."
+      next() if next

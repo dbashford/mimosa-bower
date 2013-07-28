@@ -17,8 +17,7 @@ _debug = (opts) ->
 _prepBowerInstall = (retrieveConfig, opts) ->
   _debug opts
   retrieveConfig false, (mimosaConfig) ->
-    install.bowerInstall mimosaConfig, {}, ->
-      logger.success "Bower install complete."
+    install.bowerInstall mimosaConfig
 
 _prepBowerClean = (retrieveConfig, opts) ->
   _debug opts
