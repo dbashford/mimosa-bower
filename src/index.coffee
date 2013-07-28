@@ -7,7 +7,9 @@ clean = require './clean'
 install = require './install'
 
 registration = (mimosaConfig, register) ->
-  register ['preBuild'], 'init', install.bowerInstall
+  # unless there is no means to determine if installs need to happen...
+  unless mimosaConfig.bower.copy.trackChanges is false and mimosaConfig.bower.copy.clean is true
+    register ['preBuild'], 'init', install.bowerInstall
 
 _debug = (opts) ->
   if opts.debug
