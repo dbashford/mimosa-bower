@@ -3,6 +3,7 @@
 path = require 'path'
 fs = require 'fs'
 
+_ = require 'lodash'
 logger = require 'logmimosa'
 
 utils = require "./utils"
@@ -27,7 +28,10 @@ _isEqual = (obj1, obj2) ->
 
 exports.track = (mimosaConfig) ->
   bowerConfigOutPath = _lastMimosaConfigJSONPath mimosaConfig
-  _writeJSON mimosaConfig.bower, bowerConfigOutPath
+
+  currentBowerConfig = _.cloneDeep(mimosaConfig.bower)
+  currentBowerConfig.bowerDir.pathFull = ""
+  _writeJSON currentBowerConfig, bowerConfigOutPath
 
   bowerJSON = _readBowerJSON mimosaConfig
   bowerJSONOutPath = _lastInstallBowerJSONPath mimosaConfig
@@ -48,7 +52,8 @@ exports.isInstallNeeded = (mimosaConfig) ->
     logger.debug "Could not find old bower config, install needed", err
     return true
 
-  currentBowerConfig = mimosaConfig.bower
+  currentBowerConfig = _.cloneDeep(mimosaConfig.bower)
+  currentBowerConfig.bowerDir.pathFull = ''
   currentBowerJSON = _readBowerJSON mimosaConfig
 
   if _isEqual(currentBowerConfig, oldBowerConfig) and _isEqual(currentBowerJSON, oldBowerJSON)
