@@ -9,15 +9,18 @@ wrench = require "wrench"
 logger = require "logmimosa"
 
 utils = require './utils'
+track = require './track'
+
+_removeFile = (fileName) ->
+  try
+    fs.unlinkSync fileName
+    logger.info "Removed file [[ #{fileName} ]]"
+  catch err
+    logger.warn "Unable to clean file [[ #{fileName} ]], was it moved from this location or already cleaned?"
 
 _cleanInstalledLibs = (copyConfigs) ->
   for copyConfig in copyConfigs
-    for outFile in copyConfig.out
-      try
-        fs.unlinkSync outFile
-        logger.info "Removed file [[ #{outFile} ]]"
-      catch err
-        logger.warn "Unable to clean file [[ #{outFile} ]], was it moved from this location?"
+    copyConfig.out.forEach _removeFile
 
 _removeDirs = (dirs) ->
   for dir in dirs
@@ -55,12 +58,23 @@ _cleanEmptyDirs = (mimosaConfig, packages) ->
   _removeDirs allDirs
 
 exports.bowerClean = (mimosaConfig) ->
-  bower.config.directory = mimosaConfig.bower.bowerDir.path
-  bower.commands.list({paths: true}).on 'end', (paths) ->
-    packages = Object.keys paths
-    utils.gatherPathConfigs mimosaConfig, packages, (copyConfigs) ->
-      _cleanInstalledLibs copyConfigs
-      cleanTempDir mimosaConfig, true
-      unless mimosaConfig.bower.copy.strategy is "vendorRoot"
-        _cleanEmptyDirs mimosaConfig, packages
-      logger.success "Bower artifacts cleaned."
+  if mimosaConfig.bower.copy.trackChanges is true
+    installedFiles = track.getPreviousInstalledFileList mimosaConfig
+    if installedFiles.length is 0
+      logger.info "No files to clean."
+    else
+      installedFiles.map (installedFile) ->
+        path.join mimosaConfig.root, installedFile
+      .forEach _removeFile
+    track.removeTrackFiles mimosaConfig
+    logger.success "Bower files cleaned."
+  else
+    bower.config.directory = mimosaConfig.bower.bowerDir.path
+    bower.commands.list({paths: true}).on 'end', (paths) ->
+      packages = Object.keys paths
+      utils.gatherPathConfigs mimosaConfig, packages, (copyConfigs) ->
+        _cleanInstalledLibs copyConfigs
+        cleanTempDir mimosaConfig, true
+        unless mimosaConfig.bower.copy.strategy is "vendorRoot"
+          _cleanEmptyDirs mimosaConfig, packages
+        logger.success "Bower files cleaned."

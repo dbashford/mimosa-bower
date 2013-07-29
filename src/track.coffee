@@ -23,10 +23,13 @@ _lastInstallBowerJSONPath = (mimosaConfig) ->
 _lastMimosaConfigJSONPath = (mimosaConfig) ->
   path.join mimosaConfig.root, '.mimosa', 'bower.lastmimosaconfig.json'
 
+_lastInstalledFileListPath = (mimosaConfig) ->
+  path.join mimosaConfig.root, '.mimosa', 'bower.lastinstalledfiles.json'
+
 _isEqual = (obj1, obj2) ->
   JSON.stringify(obj1) is JSON.stringify(obj2)
 
-exports.track = (mimosaConfig) ->
+exports.track = (mimosaConfig, installedFiles) ->
   bowerConfigOutPath = _lastMimosaConfigJSONPath mimosaConfig
 
   currentBowerConfig = _.cloneDeep(mimosaConfig.bower)
@@ -36,6 +39,31 @@ exports.track = (mimosaConfig) ->
   bowerJSON = _readBowerJSON mimosaConfig
   bowerJSONOutPath = _lastInstallBowerJSONPath mimosaConfig
   _writeJSON bowerJSON, bowerJSONOutPath
+
+  _writeInstalledFiles mimosaConfig, installedFiles
+
+_writeInstalledFiles = (mimosaConfig, installedFiles) ->
+  outPath = _lastInstalledFileListPath mimosaConfig
+
+  filesMinusRoot = for installedFile in installedFiles
+    installedFile.replace mimosaConfig.root + path.sep, ''
+
+  _writeJSON filesMinusRoot, outPath
+
+exports.removeTrackFiles = (mimosaConfig) ->
+  [_lastInstallBowerJSONPath(mimosaConfig)
+  _lastMimosaConfigJSONPath(mimosaConfig)
+  _lastInstalledFileListPath(mimosaConfig)].forEach (filepath) ->
+    if fs.existsSync filepath
+      fs.unlinkSync filepath
+
+exports.getPreviousInstalledFileList = (mimosaConfig) ->
+  installedFilePath = _lastInstalledFileListPath mimosaConfig
+  try
+    require installedFilePath
+  catch err
+    logger.debug err
+    []
 
 exports.isInstallNeeded = (mimosaConfig) ->
   try
@@ -61,8 +89,3 @@ exports.isInstallNeeded = (mimosaConfig) ->
     false
   else
     true
-
-
-
-
-

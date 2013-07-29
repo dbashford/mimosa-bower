@@ -47,13 +47,17 @@ _ensureBowerConfig = (mimosaConfig) ->
     false
 
 _moveInstalledLibs = (copyConfigs) ->
+  installedFiles = []
   for copyConfig in copyConfigs
     logger.debug "Going to create file [[ #{copyConfig.out} ]]"
     for outFile in copyConfig.out
       utils.makeDirectory path.dirname outFile
       fileText = fs.readFileSync copyConfig.in, "utf8"
       fs.writeFileSync outFile, fileText
+      installedFiles.push outFile
       logger.info "mimosa-bower created file [[ #{outFile} ]]"
+
+  installedFiles
 
 exports.bowerInstall = (mimosaConfig, options, next) ->
   hasBowerConfig = _ensureBowerConfig mimosaConfig
@@ -78,11 +82,11 @@ exports.bowerInstall = (mimosaConfig, options, next) ->
             logger.debug "Going to move the following copyConfigurations"
             logger.debug JSON.stringify copyConfigs, null, 2
 
-          _moveInstalledLibs copyConfigs
+          installFiles = _moveInstalledLibs copyConfigs
           clean.cleanTempDir mimosaConfig
 
           if mimosaConfig.bower.copy.trackChanges
-            track.track mimosaConfig
+            track.track mimosaConfig, installFiles
 
           next() if next
     else
