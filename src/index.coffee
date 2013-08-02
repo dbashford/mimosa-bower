@@ -16,15 +16,26 @@ _debug = (opts) ->
     logger.setDebug()
     process.env.DEBUG = true
 
+_callIfModuleIncluded = (mimosaConfig, cb) ->
+
+  ms = mimosaConfig.modules
+  if ms.indexOf("bower") > -1 or ms.indexOf("mimosa-bower") > -1
+    cb mimosaConfig
+  else
+    logger.error """
+      You have called the bower command on a project that does not have bower included.
+      To include bower, add "bower" to the "modules" array.
+      """
+
 _prepBowerInstall = (retrieveConfig, opts) ->
   _debug opts
   retrieveConfig false, (mimosaConfig) ->
-    install.bowerInstall mimosaConfig
+    _callIfModuleIncluded mimosaConfig, install.bowerInstall
 
 _prepBowerClean = (retrieveConfig, opts) ->
   _debug opts
   retrieveConfig false, (mimosaConfig) ->
-    clean.bowerClean mimosaConfig
+    _callIfModuleIncluded mimosaConfig, clean.bowerClean
 
 registerCommand = (program, retrieveConfig) ->
   program

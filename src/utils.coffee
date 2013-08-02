@@ -104,9 +104,9 @@ _isPathExcluded = (copy, filePath) ->
     false
 
 exports.makeDirectory = (folder) ->
-      unless fs.existsSync folder
-        logger.debug "Making folder [[ #{folder} ]]"
-        wrench.mkdirSyncRecursive folder, 0o0777
+  unless fs.existsSync folder
+    logger.debug "Making folder [[ #{folder} ]]"
+    wrench.mkdirSyncRecursive folder, 0o0777
 
 exports.gatherPathConfigs = (mimosaConfig, installedNames, cb) ->
   bower.commands.list({paths: true}).on 'end', (paths) ->
