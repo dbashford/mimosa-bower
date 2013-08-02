@@ -8,7 +8,7 @@ logger = require "logmimosa"
 exports.defaults = ->
   bower:
     bowerDir:
-      path: ".mimosa/bower_components"
+      path: ".mimosa/bower/bower_components"
       clean: true
     copy:
       enabled: true
@@ -28,8 +28,8 @@ exports.placeholder = ->
 
     # bower:                  # Configuration for bower module
       # bowerDir:
-        # path: ".mimosa/bower_components"  # The location mimosa-bower places temporary bower
-                                            # assets.
+        # path: ".mimosa/bower/bower_components"  # The location mimosa-bower places temporary
+                                                  # bower assets.
         # clean: true              # whether or not to remove temporary bower assets after install
 
       # copy:                       # configuration for the copying of assets from bower temp

@@ -18,13 +18,13 @@ _readBowerJSON = (mimosaConfig) ->
   require bowerJSONPath
 
 _lastInstallBowerJSONPath = (mimosaConfig) ->
-  path.join mimosaConfig.root, '.mimosa', 'bower.lastinstall.json'
+  path.join mimosaConfig.root, '.mimosa', 'bower', 'last-install.json'
 
 _lastMimosaConfigJSONPath = (mimosaConfig) ->
-  path.join mimosaConfig.root, '.mimosa', 'bower.lastmimosaconfig.json'
+  path.join mimosaConfig.root, '.mimosa', 'bower', 'last-mimosa-config.json'
 
 _lastInstalledFileListPath = (mimosaConfig) ->
-  path.join mimosaConfig.root, '.mimosa', 'bower.lastinstalledfiles.json'
+  path.join mimosaConfig.root, '.mimosa', 'bower', 'last-installed-files.json'
 
 _isEqual = (obj1, obj2) ->
   JSON.stringify(obj1) is JSON.stringify(obj2)
