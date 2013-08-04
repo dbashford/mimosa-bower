@@ -15,7 +15,7 @@ _install = (mimosaConfig, cb) ->
   bower.config.directory = mimosaConfig.bower.bowerDir.path
   installs = []
   logger.info "Starting Bower install..."
-  bower.commands.install()
+  bower.commands.install(undefined, {forceLatest:mimosaConfig.bower.copy.forceLatest})
     .on('log', (log) ->
       if log.level is "action" and log.id is "install"
         if logger.isDebug
