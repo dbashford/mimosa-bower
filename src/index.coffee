@@ -16,11 +16,11 @@ _debug = (opts) ->
     logger.setDebug()
     process.env.DEBUG = true
 
-_callIfModuleIncluded = (mimosaConfig, cb) ->
+_callIfModuleIncluded = (mimosaConfig, opts, cb) ->
 
   ms = mimosaConfig.modules
   if ms.indexOf("bower") > -1 or ms.indexOf("mimosa-bower") > -1
-    cb mimosaConfig
+    cb mimosaConfig, opts
   else
     logger.error """
       You have called the bower command on a project that does not have bower included.
@@ -30,12 +30,12 @@ _callIfModuleIncluded = (mimosaConfig, cb) ->
 _prepBowerInstall = (retrieveConfig, opts) ->
   _debug opts
   retrieveConfig false, (mimosaConfig) ->
-    _callIfModuleIncluded mimosaConfig, install.bowerInstall
+    _callIfModuleIncluded mimosaConfig, opts, install.bowerInstall
 
 _prepBowerClean = (retrieveConfig, opts) ->
   _debug opts
   retrieveConfig false, (mimosaConfig) ->
-    _callIfModuleIncluded mimosaConfig, clean.bowerClean
+    _callIfModuleIncluded mimosaConfig, opts, clean.bowerClean
 
 registerCommand = (program, retrieveConfig) ->
   program
@@ -54,6 +54,7 @@ registerCommand = (program, retrieveConfig) ->
 
   program
     .command('bower:clean')
+    .option("-c, --cache", "also clean the cache")
     .option("-D, --debug", "run in debug mode")
     .description("Removes all discoverable installed bower modules from source code and removes temp directory.")
     .action (opts) ->
