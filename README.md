@@ -43,9 +43,11 @@ The following commands are added to Mimosa when mimosa-bower is included in a pr
 
 `bower` and `bower:install` are identical commands. These commands provide one off access to Bower installs without kicking off `watch` or `build`.  If `bower.bowerDir.clean` is set to `true`, this command is the only way to install Bower dependencies.
 
-### bower:clean
+### bower:clean [-c/--cache]
 
 `bower:clean` will remove all of the installed dependencies from their target directories in the `vendor` folder. It will also clean up any Bower package related folders that then become empty. Finally it will clean up the `bower.bowerDir.path` folder, removing all the temporary assets.
+
+`bower:clean -c` or `bower:clean --cache`, in addition to cleaning up installed dependencies, will also clean the Bower cache. This often is necessary when Bower updates, or if packages get updated without new versions.
 
 ## Default Config
 
