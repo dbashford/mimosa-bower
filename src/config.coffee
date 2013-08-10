@@ -16,7 +16,7 @@ exports.defaults = ->
       outRoot: null
       defaultStrategy: "packageRoot" # not exposed or documented
       strategy: "packageRoot"
-      forceLatest: false
+      forceLatest: true
       exclude: []
       overridesArrays: {}
       overridesObjects: {}
@@ -78,7 +78,7 @@ exports.placeholder = ->
                                     # default strategy. If only 2 of 10 packages are specified
                                     # the rest get the "*" strategy. If no "*" is provided,
                                     # "packageRoot" is the assumed default.
-        # forceLatest: false        # If you are running into a problem where dependency versions
+        # forceLatest: true         # If you are running into a problem where dependency versions
                                     # are clashing, use forceLatest to make it so the latest
                                     # version is loaded.  For instance, you might have jquery 2.0.0
                                     # as a package, but something else depends on 1.8.1.

@@ -21,9 +21,17 @@ _install = (mimosaConfig, cb) ->
         if logger.isDebug
           logger.debug "Installed the following into #{mimosaConfig.bower.bowerDir.path}: " + log.data.endpoint.name
         installs.push log
+      else if log.level is 'conflict' and log.id is 'solved' and log.data.forced
+        _logForcedMessage log
     ).on('error', (message) ->
       _logInstallErrorMessage message
     ).on('end', -> cb installs)
+
+_logForcedMessage = (log) ->
+  picks = log.data.picks.map (pick) ->
+    pick.pkgMeta.name + "@" + pick.pkgMeta.version
+  suitMeta = log.data.suitable.pkgMeta
+  logger.warn "mimosa-bower used forceLatest and picked [[ #{suitMeta.name}@#{suitMeta.version} ]] from [[ #{picks.join(', ')} ]]"
 
 _logInstallErrorMessage = (message) ->
   logMessage = if message.code is "ECONFLICT"
