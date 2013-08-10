@@ -60,7 +60,7 @@ _cleanEmptyDirs = (mimosaConfig, packages) ->
 _cleanCache = ->
   logger.info "Cleaning Bower cache..."
   error = false
-  bower.commands.cache.clean([])
+  bower.commands.cache.clean()
     .on('log', (log) ->
       #console.log log
     ).on('error', (message) ->
