@@ -103,6 +103,17 @@ _isPathExcluded = (copy, filePath) ->
   else
     false
 
+exports.ensureBowerConfig = (mimosaConfig) ->
+  bowerJsonPath = path.join mimosaConfig.root, "bower.json"
+  try
+    require bowerJsonPath
+    logger.debug "bower.json exists"
+    true
+  catch err
+    logger.warn "Error reading Bower config file [[ #{bowerJsonPath} ]]", err
+    logger.info "If you do not wish to use Bower, remove 'bower' from the mimosa-config modules array"
+    false
+
 exports.makeDirectory = (folder) ->
   unless fs.existsSync folder
     logger.debug "Making folder [[ #{folder} ]]"

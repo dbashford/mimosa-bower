@@ -90,6 +90,10 @@ _cleanFilesViaTrackingInfo = (mimosaConfig) ->
   logger.success "Bower files cleaned."
 
 exports.bowerClean = (mimosaConfig, opts) ->
+  hasBowerConfig = utils.ensureBowerConfig mimosaConfig
+  unless hasBowerConfig
+    return
+
   bower.config.directory = mimosaConfig.bower.bowerDir.path
 
   if opts.cache

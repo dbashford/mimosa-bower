@@ -44,16 +44,6 @@ _logInstallErrorMessage = (message) ->
 
   logger.error logMessage
 
-_ensureBowerConfig = (mimosaConfig) ->
-  bowerJsonPath = path.join mimosaConfig.root, "bower.json"
-  try
-    require bowerJsonPath
-    logger.debug "bower.json exists"
-    true
-  catch err
-    logger.error "Error reading Bower config file [[ #{bowerJsonPath} ]]", err
-    false
-
 _moveInstalledLibs = (copyConfigs) ->
   installedFiles = []
   for copyConfig in copyConfigs
@@ -68,7 +58,7 @@ _moveInstalledLibs = (copyConfigs) ->
   installedFiles
 
 exports.bowerInstall = (mimosaConfig, options, next) ->
-  hasBowerConfig = _ensureBowerConfig mimosaConfig
+  hasBowerConfig = utils.ensureBowerConfig mimosaConfig
   unless hasBowerConfig
     next() if next
     return
