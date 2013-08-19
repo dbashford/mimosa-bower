@@ -50,8 +50,8 @@ _moveInstalledLibs = (copyConfigs) ->
     logger.debug "Going to create file [[ #{copyConfig.out} ]]"
     for outFile in copyConfig.out
       utils.makeDirectory path.dirname outFile
-      fileText = fs.readFileSync copyConfig.in, "utf8"
-      fs.writeFileSync outFile, fileText
+      fileBuffer = fs.readFileSync copyConfig.in
+      fs.writeFileSync outFile, fileBuffer
       installedFiles.push outFile
       logger.info "mimosa-bower created file [[ #{outFile} ]]"
 
