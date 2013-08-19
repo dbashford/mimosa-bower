@@ -21,7 +21,7 @@ exports.defaults = ->
       overridesArrays: {}
       overridesObjects: {}
       mainOverrides: {}
-      pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
+      pathMod: []
 
 exports.placeholder = ->
   """
@@ -82,13 +82,13 @@ exports.placeholder = ->
                                     # are clashing, use forceLatest to make it so the latest
                                     # version is loaded.  For instance, you might have jquery 2.0.0
                                     # as a package, but something else depends on 1.8.1.
-        # pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
-                                    # pathMod can be an array of strings or a regex. It is used to
+        # pathMod: []               # pathMod can be an array of strings or a regex. It is used to
                                     # strip full pieces of a path from the output file when the
                                     # selected strategy is "none". If a bower package script is in
-                                    # "packageName/lib/js/foo.js" by default the output path would
-                                    # have "lib" and "js" stripped. Feel free to suggest additions
-                                    # to this based on your experience!
+                                    # "packageName/lib/js/foo.js" and "pathMod" is set to
+                                    # ['js', 'lib'] the output path would have "lib" and "js"
+                                    # stripped. Feel free to suggest additions to this based on
+                                    # your experience!
 
   """
 
@@ -101,8 +101,6 @@ strategyVal = (errors, strat) ->
 
 exports.validate = (config, validators) ->
   errors = []
-
-  logger.debug "Beginning bower validate"
 
   if validators.ifExistsIsObject(errors, "bower config", config.bower)
     b = config.bower
@@ -163,25 +161,25 @@ exports.validate = (config, validators) ->
 
       if b.copy.pathMod?
         if Array.isArray b.copy.pathMod
-          notString = false
-          regexArray = []
-          for item in b.copy.pathMod
-            if typeof item is "string"
-              regexArray.push "^#{item}$"
-            else
-              notString = true
-              break
-
-          if notString
-            errors.push "bower.copy.pathMod must be a regex or an array of strings."
+          if b.copy.pathMod.length is 0
+            b.copy.pathMod = null
           else
-            regexString = "(" + regexArray.join("|") + ")"
-            b.copy.pathMod = new RegExp(regexString)
+            notString = false
+            regexArray = []
+            for item in b.copy.pathMod
+              if typeof item is "string"
+                regexArray.push "^#{item}$"
+              else
+                notString = true
+                break
 
+            if notString
+              errors.push "bower.copy.pathMod must be a regex or an array of strings."
+            else
+              regexString = "(" + regexArray.join("|") + ")"
+              b.copy.pathMod = new RegExp(regexString)
         else
           unless b.copy.pathMod instanceof RegExp
             errors.push "bower.copy.pathMod must be a regex or an array of strings."
-
-  logger.debug "Ending bower validate"
 
   errors

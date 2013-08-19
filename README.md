@@ -64,7 +64,7 @@ bower:
     mainOverrides: {}
     strategy: "packageRoot"
     forceLatest: true
-    pathMod: ["js", "javascript", "javascripts", "css", "stylesheet", "stylesheets", "vendor", "lib"]
+    pathMod: []
 ```
 
 * `bowerDir.path`: string, the path to where mimosa-bower will initially install bower assets before moving the key assets into the `watch.sourceDir`
@@ -78,7 +78,7 @@ bower:
   `mainOverrides` packages can also be provided an object in addition to string paths. The object maps input paths to output paths and allow for specific placement of files and folders. Ex {"json2":{"json2.js":"json-utils/json2.js"}. In this case the "json2.js" file will be placed in "json-utils/json2.js" in the vendor.javascripts folder. If a file is provided as opposed to a directory, the output path must specify the output file name. Any directories copied in this way are copied entirely without manipulation of the folder structure.
 * `copy.strategy`: string, the copying strategy. `"vendorRoot"` places all files at the root of the vendor directory. `"packageRoot"` places the files in the vendor directory in a folder named for that package. `"none"` will copy the assets into the vendor directory without modification. `strategy` can also be an object with keys that match the names of packages and values of strategy types. When using a `strategy` object, the key of `"*"` provides a default `strategy`. If only 2 of 10 packages are specified in the object, the rest get the "*" strategy. If no `"*"` is provided, `"packageRoot"` is the assumed default.
 * `copy.forceLatest`: `forceLatest` is a means to quickly fix any problems with library versions. If you want to install the latest jquery, but one of your other libraries wants to install an older version the install will fail,  this flag will ensure the the latest version is selected. When the `forceLatest` results in a selection, a warning message is logged with the details of which version was picked and which versions were not.
-* `copy.pathMod`: `pathMod` can be an array of strings or a regexes. It is used to strip full pieces of a path from the output file when the selected `strategy` is `"none"`. If a bower package script is in `packageName/lib/js/foo.js` by default the output path would have "lib" and "js" stripped. Feel free to suggest additions to this based on your experience!
+* `copy.pathMod`: `pathMod` can be an array of strings or a regexes. It is used to strip full pieces of a path from the output file when the selected `strategy` is `"none"` or a `pathOverride` object is used. If a bower package script is in `packageName/lib/js/foo.js` and pathMod is set to `["lib", "js"]` the output path would have "lib" and "js" stripped. Feel free to suggest additions to this based on your experience!
 
 
 ## Alternate Config
