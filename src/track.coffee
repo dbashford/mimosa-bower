@@ -49,6 +49,8 @@ _writeInstalledFiles = (mimosaConfig, installedFiles) ->
   filesMinusRoot = for installedFile in installedFiles
     installedFile.replace mimosaConfig.root + path.sep, ''
 
+  filesMinusRoot = _.sortBy filesMinusRoot, (i) -> i.length
+
   _writeJSON filesMinusRoot, outPath
 
 exports.removeTrackFiles = (mimosaConfig) ->
