@@ -34,6 +34,7 @@ exports.track = (mimosaConfig, installedFiles) ->
 
   currentBowerConfig = _.cloneDeep(mimosaConfig.bower)
   currentBowerConfig.bowerDir.pathFull = ""
+  currentBowerConfig.copy.exclude = []
   _writeJSON currentBowerConfig, bowerConfigOutPath
 
   bowerJSON = _readBowerJSON mimosaConfig
@@ -82,6 +83,7 @@ exports.isInstallNeeded = (mimosaConfig) ->
 
   currentBowerConfig = _.cloneDeep(mimosaConfig.bower)
   currentBowerConfig.bowerDir.pathFull = ''
+  currentBowerConfig.copy.exclude = []
   currentBowerJSON = _readBowerJSON mimosaConfig
 
   if _isEqual(currentBowerConfig, oldBowerConfig) and _isEqual(currentBowerJSON, oldBowerJSON)
