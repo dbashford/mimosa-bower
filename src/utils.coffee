@@ -83,7 +83,12 @@ _resolvePaths = (mimosaConfig, names, paths) ->
             else
               logger.warn "Cannot determine main file for [[ #{lib} ]] at [[ #{aPath} ]]. Consider adding a mainOverrides entry."
         else
-          _addResolvedPath mimosaConfig, resolvedPaths[lib], path.join(fullLibPath, aPath)
+          joinedPath = path.join fullLibPath, aPath
+          if fs.existsSync joinedPath
+            _addResolvedPath mimosaConfig, resolvedPaths[lib], joinedPath
+          else
+            logger.warn "Cannot determine main file for [[ #{lib} ]] at [[ #{aPath} ]]. bower.json may be incorrect. Consider adding a mainOverrides entry."
+
   resolvedPaths
 
 _addResolvedPath = (mimosaConfig, pathArray, thePath, prependPack) ->
