@@ -7,6 +7,7 @@ logger = require "logmimosa"
 
 exports.defaults = ->
   bower:
+    watch: true
     bowerDir:
       path: ".mimosa/bower/bower_components"
       clean: true
@@ -27,11 +28,13 @@ exports.placeholder = ->
   """
   \t
 
-    # bower:                  # Configuration for bower module
+    # bower:                        # Configuration for bower module
+      # watch: true                 # Whether or not to watch the bower.json file to automatically
+                                    # kick off a bower install when it changes.
       # bowerDir:
         # path: ".mimosa/bower/bower_components"  # The location mimosa-bower places temporary
                                                   # bower assets.
-        # clean: true              # whether or not to remove temporary bower assets after install
+        # clean: true               # whether or not to remove temporary bower assets after install
 
       # copy:                       # configuration for the copying of assets from bower temp
                                     # directories into the project
@@ -104,6 +107,9 @@ exports.validate = (config, validators) ->
 
   if validators.ifExistsIsObject(errors, "bower config", config.bower)
     b = config.bower
+
+    validators.ifExistsIsBoolean(errors, "bower.watch", b.watch)
+
     if validators.ifExistsIsObject(errors, "bower.bowerDir", b.bowerDir)
       if validators.ifExistsIsString(errors, "bower.bowerDir.path", b.bowerDir.path)
         b.bowerDir.pathFull = path.join config.root, b.bowerDir.path

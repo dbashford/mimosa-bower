@@ -15,6 +15,8 @@ _writeJSON = (json, outPath) ->
 
 _readBowerJSON = (mimosaConfig) ->
   bowerJSONPath = path.join mimosaConfig.root, "bower.json"
+  if require.cache[bowerJSONPath]
+    delete require.cache[bowerJSONPath]
   require bowerJSONPath
 
 _lastInstallBowerJSONPath = (mimosaConfig) ->
@@ -69,8 +71,11 @@ exports.getPreviousInstalledFileList = (mimosaConfig) ->
     []
 
 exports.isInstallNeeded = (mimosaConfig) ->
+  lastIntalledPath = _lastInstallBowerJSONPath mimosaConfig
+  if require.cache[lastIntalledPath]
+    delete require.cache[lastIntalledPath]
   try
-    oldBowerJSON = require _lastInstallBowerJSONPath(mimosaConfig)
+    oldBowerJSON = require lastIntalledPath
     logger.debug "Found old bower json"
   catch err
     logger.debug "Could not find old bower json, install needed", err

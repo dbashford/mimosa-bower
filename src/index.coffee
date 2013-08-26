@@ -1,6 +1,10 @@
 "use strict"
 
+path = require 'path'
+
+
 logger = require "logmimosa"
+watcher = require "chokidar"
 
 config = require './config'
 clean = require './clean'
@@ -11,13 +15,20 @@ registration = (mimosaConfig, register) ->
   unless mimosaConfig.bower.copy.trackChanges is false and mimosaConfig.bower.copy.clean is true
     register ['preBuild'], 'init', install.bowerInstall
 
+  if mimosaConfig.isWatch and mimosaConfig.bower.watch
+    _watch mimosaConfig
+
+_watch = (mimosaConfig) ->
+  bowerJsonPath = path.join mimosaConfig.root, "bower.json"
+  watcher.watch(bowerJsonPath, {persistent: true}).on 'change', ->
+    install.bowerInstall mimosaConfig
+
 _debug = (opts) ->
   if opts.debug
     logger.setDebug()
     process.env.DEBUG = true
 
 _callIfModuleIncluded = (mimosaConfig, opts, cb) ->
-
   ms = mimosaConfig.modules
   if ms.indexOf("bower") > -1 or ms.indexOf("mimosa-bower") > -1
     cb mimosaConfig, opts
