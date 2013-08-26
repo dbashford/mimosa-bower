@@ -35,6 +35,8 @@ If mimosa-bower encounters any version collisions, it will error out and indicat
 
 If mimosa-bower cannot identify the `main` file for a package because it hasn't been provided by the package author mimosa-bower will indicate that via a console log message. The `bower.copy.mainOverrides` can be used to indicate which files from the package are to use used.
 
+During `mimosa watch`, mimosa-bower will watch the `bower.json` and detect if any changes to it occur, and when they do, run a Bower install.
+
 ## New Commands
 
 The following commands are added to Mimosa when mimosa-bower is included in a project.
@@ -53,6 +55,7 @@ The following commands are added to Mimosa when mimosa-bower is included in a pr
 
 ```coffeescript
 bower:
+  watch: true
   bowerDir:
     path: ".mimosa/bower_components"
     clean: true
@@ -67,6 +70,7 @@ bower:
     pathMod: []
 ```
 
+* `watcch`: boolean, whether or not to watch the `bower.json` and kick off installs when it changes.
 * `bowerDir.path`: string, the path to where mimosa-bower will initially install bower assets before moving the key assets into the `watch.sourceDir`
 * `bowerDir.clean`: boolean, whether or not to remove temporary bower assets after install.
 * `copy.enabled`: boolean, whether or not to copy assets out of the `bowerDir.path` and into `watch.sourceDir`
