@@ -5,7 +5,7 @@ mimosa-bower
 
 This module provides [Bower](http://bower.io) support to Mimosa. It allows for installing of Bower packages and moving of those packages to the appropriate location in a Mimosa application. This module is targeted for the 1.0 release of Bower.
 
-For more information regarding Mimosa, see http://mimosajs.com
+For more information regarding Mimosa, see http://mimosa.io
 
 For more information regarding Bower, see http://bower.io
 
