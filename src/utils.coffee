@@ -51,7 +51,10 @@ _processOverridesList = (mimosaConfig, overrides, libPath, resolvedPaths, lib) -
 _resolvePaths = (mimosaConfig, names, paths) ->
   installedPaths = {}
   names.forEach (name) ->
-    installedPaths[name] = paths[name].split(",")
+    installedPaths[name] = if Array.isArray(paths[name])
+      paths[name]
+    else
+      [paths[name]]
 
   resolvedPaths = {}
   for lib, paths of installedPaths
@@ -103,10 +106,8 @@ _addResolvedPath = (mimosaConfig, pathArray, thePath, prependPack) ->
 _isPathExcluded = (copy, filePath) ->
   if copy.excludeRegex? and filePath.match copy.excludeRegex
     true
-  else if copy.exclude.indexOf(filePath) > -1
-    true
   else
-    false
+    copy.exclude.indexOf(filePath) > -1
 
 exports.ensureBowerConfig = (mimosaConfig) ->
   bowerJsonPath = path.join mimosaConfig.root, "bower.json"
@@ -125,7 +126,7 @@ exports.makeDirectory = (folder) ->
     wrench.mkdirSyncRecursive folder, 0o0777
 
 exports.gatherPathConfigs = (mimosaConfig, installedNames, cb) ->
-  bower.commands.list({paths: true}).on 'end', (paths) ->
+  bower.commands.list({paths: true, relative:false}).on 'end', (paths) ->
     resolvedPaths = _resolvePaths mimosaConfig, installedNames, paths
     copyConfigs = strategy mimosaConfig, resolvedPaths
     cb copyConfigs
