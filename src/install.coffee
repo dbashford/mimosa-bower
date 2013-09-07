@@ -86,6 +86,8 @@ _postInstall = (mimosaConfig, isSingleLibraryInstall, next) ->
             track.track mimosaConfig, installFiles, isSingleLibraryInstall
 
           next() if next
+      else
+        next() if next
     else
       logger.info "No bower packages to install."
       next() if next
@@ -112,4 +114,3 @@ exports.bowerInstall = (mimosaConfig, options, next) ->
       return
 
   _install mimosaConfig, undefined, _postInstall(mimosaConfig, false, next)
-
