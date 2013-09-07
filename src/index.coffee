@@ -2,7 +2,6 @@
 
 path = require 'path'
 
-
 logger = require "logmimosa"
 watcher = require "chokidar"
 
@@ -43,6 +42,12 @@ _prepBowerInstall = (retrieveConfig, opts) ->
   retrieveConfig false, (mimosaConfig) ->
     _callIfModuleIncluded mimosaConfig, opts, install.bowerInstall
 
+_prepBowerLibraryInstall = (retrieveConfig, names, opts) ->
+  opts.names = names
+  _debug opts
+  retrieveConfig false, (mimosaConfig) ->
+    _callIfModuleIncluded mimosaConfig, opts, install.installLibrary
+
 _prepBowerClean = (retrieveConfig, opts) ->
   _debug opts
   retrieveConfig false, (mimosaConfig) ->
@@ -57,11 +62,13 @@ registerCommand = (program, retrieveConfig) ->
       _prepBowerInstall retrieveConfig, opts
 
   program
-    .command('bower:install')
+    .command('bower:install <names>')
     .option("-D, --debug", "run in debug mode")
-    .description("Run bower install")
-    .action (opts) ->
-      _prepBowerInstall retrieveConfig, opts
+    .option("-s, --savedev", "save to dev dependencies instead of dependencies")
+    .description("Install a library and update the bower.json accordingly")
+    .action (names, opts) ->
+      names = names.split(',')
+      _prepBowerLibraryInstall retrieveConfig, names, opts
 
   program
     .command('bower:clean')

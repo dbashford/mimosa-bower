@@ -31,7 +31,7 @@ _lastInstalledFileListPath = (mimosaConfig) ->
 _isEqual = (obj1, obj2) ->
   JSON.stringify(obj1) is JSON.stringify(obj2)
 
-exports.track = (mimosaConfig, installedFiles) ->
+exports.track = (mimosaConfig, installedFiles, appendIntalledFiles) ->
   bowerConfigOutPath = _lastMimosaConfigJSONPath mimosaConfig
 
   currentBowerConfig = _.cloneDeep(mimosaConfig.bower)
@@ -42,17 +42,22 @@ exports.track = (mimosaConfig, installedFiles) ->
   bowerJSON = _readBowerJSON mimosaConfig
   bowerJSONOutPath = _lastInstallBowerJSONPath mimosaConfig
   _writeJSON bowerJSON, bowerJSONOutPath
+  _writeInstalledFiles mimosaConfig, installedFiles, appendIntalledFiles
 
-  _writeInstalledFiles mimosaConfig, installedFiles
-
-_writeInstalledFiles = (mimosaConfig, installedFiles) ->
+_writeInstalledFiles = (mimosaConfig, installedFiles, appendIntalledFiles) ->
   outPath = _lastInstalledFileListPath mimosaConfig
 
+  # remove root and path sep from all install paths
   filesMinusRoot = for installedFile in installedFiles
     installedFile.replace mimosaConfig.root + path.sep, ''
 
-  filesMinusRoot = _.sortBy filesMinusRoot, (i) -> i.length
+  # if installing single library, append it to existing list
+  if appendIntalledFiles
+    filesMinusRoot = filesMinusRoot.concat _getPreviousInstalledFileList()
 
+  # remove dupes, then sort to avoid unnecessary diffs in file
+  filesMinusRoot = _.uniq filesMinusRoot
+  filesMinusRoot = _.sortBy filesMinusRoot, (i) -> i.length
   _writeJSON filesMinusRoot, outPath
 
 exports.removeTrackFiles = (mimosaConfig) ->

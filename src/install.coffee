@@ -11,11 +11,21 @@ clean = require "./clean"
 utils = require "./utils"
 track = require "./track"
 
-_install = (mimosaConfig, cb) ->
+_install = (mimosaConfig, _installOptions, cb) ->
   bower.config.directory = mimosaConfig.bower.bowerDir.path
   installs = []
+
+  names = undefined
+  installOpts =
+    forceLatest: mimosaConfig.bower.copy.forceLatest
+
+  if _installOptions
+    installOpts.save = _installOptions.save
+    installOpts.saveDev = _installOptions.saveDev
+    names = _installOptions.names
+
   logger.info "Starting Bower install..."
-  bower.commands.install(undefined, {forceLatest:mimosaConfig.bower.copy.forceLatest})
+  bower.commands.install(names, installOpts)
     .on('log', (log) ->
       if log.level is "action" and log.id is "install"
         if logger.isDebug
@@ -57,20 +67,9 @@ _moveInstalledLibs = (copyConfigs) ->
 
   installedFiles
 
-exports.bowerInstall = (mimosaConfig, options, next) ->
-  hasBowerConfig = utils.ensureBowerConfig mimosaConfig
-  unless hasBowerConfig
-    next() if next
-    return
-
-  if mimosaConfig.bower.copy.trackChanges
-    unless track.isInstallNeeded mimosaConfig
-      logger.info "No Bower installs needed."
-      next() if next
-      return
-
+_postInstall = (mimosaConfig, isSingleLibraryInstall, next) ->
   utils.makeDirectory mimosaConfig.bower.bowerDir.path
-  _install mimosaConfig, (installs) ->
+  (installs) ->
     if installs.length > 0
       logger.debug "There were a total of [[ #{installs.length} ]] bower packages installed"
       if mimosaConfig.bower.copy.enabled
@@ -84,9 +83,33 @@ exports.bowerInstall = (mimosaConfig, options, next) ->
           clean.cleanTempDir mimosaConfig
 
           if mimosaConfig.bower.copy.trackChanges
-            track.track mimosaConfig, installFiles
+            track.track mimosaConfig, installFiles, isSingleLibraryInstall
 
           next() if next
     else
       logger.info "No bower packages to install."
       next() if next
+
+exports.installLibrary = (mimosaConfig, opts) ->
+  hasBowerConfig = utils.ensureBowerConfig(mimosaConfig)
+  libraryOptions =
+    names: opts.names
+    save: hasBowerConfig and not opts.savedev
+    saveDev: hasBowerConfig and opts.savedev
+
+  _install mimosaConfig, libraryOptions, _postInstall(mimosaConfig, true)
+
+exports.bowerInstall = (mimosaConfig, options, next) ->
+  hasBowerConfig = utils.ensureBowerConfig mimosaConfig
+  unless hasBowerConfig
+    next() if next
+    return
+
+  if mimosaConfig.bower.copy.trackChanges
+    unless track.isInstallNeeded mimosaConfig
+      logger.info "No Bower installs needed."
+      next() if next
+      return
+
+  _install mimosaConfig, undefined, _postInstall(mimosaConfig, false, next)
+
