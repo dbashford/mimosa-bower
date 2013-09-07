@@ -23,6 +23,8 @@ _install = (mimosaConfig, _installOptions, cb) ->
     installOpts.save = _installOptions.save
     installOpts.saveDev = _installOptions.saveDev
     names = _installOptions.names
+  else
+    installOpts.save = true
 
   logger.info "Starting Bower install..."
   bower.commands.install(names, installOpts)
