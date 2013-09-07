@@ -64,7 +64,7 @@ registerCommand = (program, retrieveConfig) ->
   program
     .command('bower:install <names>')
     .option("-D, --debug", "run in debug mode")
-    .option("-s, --savedev", "save to dev dependencies instead of dependencies")
+    .option("-d, --savedev", "save to dev dependencies instead of dependencies")
     .description("Install a library and update the bower.json accordingly")
     .action (names, opts) ->
       names = names.split(',')
