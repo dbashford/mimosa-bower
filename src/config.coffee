@@ -19,6 +19,7 @@ exports.defaults = ->
       strategy: "packageRoot"
       forceLatest: true
       exclude: []
+      unknownMainFullCopy: false
       overridesArrays: {}
       overridesObjects: {}
       mainOverrides: {}
@@ -55,6 +56,9 @@ exports.placeholder = ->
         # exclude:[]                # An array of string paths or regexes. Files to exclude from
                                     # copying. Paths should be relative to the bowerdir.path or
                                     # absolute.
+        # unknownMainFullCopy: false # When set to true, any bower package that does not have main
+                                    # files configured in its bower.json will have its entire
+                                    # folder contents copied in.
         # mainOverrides: {}         # Occasionally bower packages do not clearly indicate what file
                                     # is the main library file. In those cases, mimosa cannot find
                                     # the main files to copy them to the vendor directory. json2 is
@@ -118,6 +122,7 @@ exports.validate = (config, validators) ->
       validators.ifExistsIsBoolean(errors, "bower.copy.enabled", b.copy.enabled)
       validators.ifExistsIsBoolean(errors, "bower.copy.trackChanges", b.copy.trackChanges)
       validators.ifExistsIsBoolean(errors, "bower.copy.forceLatest", b.copy.forceLatest)
+      validators.ifExistsIsBoolean(errors, "bower.copy.unknownMainFullCopy", b.copy.unknownMainFullCopy)
 
       if b.copy.outRoot is null
         b.copy.outRoot = ''
