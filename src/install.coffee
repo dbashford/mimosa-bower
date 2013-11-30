@@ -37,6 +37,7 @@ _install = (mimosaConfig, _installOptions, cb) ->
         _logForcedMessage log
     ).on('error', (message) ->
       _logInstallErrorMessage message
+      cb []
     ).on('end', -> cb installs)
 
 _logForcedMessage = (log) ->
@@ -51,6 +52,10 @@ _logInstallErrorMessage = (message) ->
     "#{message}: #{pickVersions}"
   else if message.code is "EINVALID"
     "#{message}: #{message.details}"
+  else if message.code is "ENOGIT"
+    "Mimosa is trying to use Bower which depends on having git installed, but Bower cannot find git. " +
+    "If you do not wish to install git or use Bower, you can remove \"bower\" from the list of modules " +
+    "in the mimosa-config."
   else
     message
 
