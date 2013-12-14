@@ -56,6 +56,7 @@ transforms.none = (mimosaConfig, inPath, lib) ->
     modInPath.replace mimosaConfig.bower.bowerDir.pathFull, path.join(mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot)
 
 transforms.custom = (mimosaConfig, lib, inPath) ->
+
   modInPath = _replacePathPieces mimosaConfig, inPath
 
   # nuke the bowerDir path
@@ -67,24 +68,24 @@ transforms.custom = (mimosaConfig, lib, inPath) ->
   # retrieve override object for lib
   overrideObject = mimosaConfig.bower.copy.overridesObjects[lib]
 
-  # the leading edge of the path should now match one of the overrides in the object
-  matchedOverrides = []
+  modPaths = []
   Object.keys(overrideObject).forEach (oKey) ->
-    if modInPath.indexOf(oKey) is 0
-      matchedOverrides.push oKey
+    normalizedKey = path.normalize oKey
+    # the leading edge of the path should now match one of the overrides in the object
+    if modInPath.indexOf(normalizedKey) is 0
+      # do straight path replacement at leading edge
+      modPath = modInPath.replace normalizedKey, overrideObject[oKey]
+      modPaths.push modPath
 
   # found nothing, uh oh, bad config
-  return if matchedOverrides.length is 0
+  return if modPaths.length is 0
 
-  for matchedOverride in matchedOverrides
-    # do straight path replacement at leading edge
-    modPath = modInPath.replace matchedOverride, overrideObject[matchedOverride]
-
-    # now put it all together
+  # now put it all together
+  for modPath in modPaths
     if _isJavaScript modPath
-      path.join path.join(mimosaConfig.vendor.javascripts, mimosaConfig.bower.copy.outRoot), modPath
+      path.join mimosaConfig.vendor.javascripts, mimosaConfig.bower.copy.outRoot, modPath
     else
-      path.join path.join(mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot), modPath
+      path.join mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot, modPath
 
 determineTransform = (mimosaConfig, pack) ->
   theTransform = mimosaConfig.bower.copy.strategy[pack] ? mimosaConfig.bower.copy.defaultStrategy
@@ -107,4 +108,3 @@ module.exports = (mimosaConfig, resolvedPaths) ->
         copyFileConfigs.push {in:inPath, out:[outPath]}
 
   copyFileConfigs
-
