@@ -56,7 +56,6 @@ transforms.none = (mimosaConfig, inPath, lib) ->
     modInPath.replace mimosaConfig.bower.bowerDir.pathFull, path.join(mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot)
 
 transforms.custom = (mimosaConfig, lib, inPath) ->
-
   modInPath = _replacePathPieces mimosaConfig, inPath
 
   # nuke the bowerDir path
