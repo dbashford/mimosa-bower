@@ -23,7 +23,8 @@ _watch = (mimosaConfig) ->
     install.bowerInstall mimosaConfig
 
 _debug = (opts) ->
-  if opts.debug
+  if opts.mdebug
+    opts.debug = true
     logger.setDebug()
     process.env.DEBUG = true
 
@@ -56,14 +57,14 @@ _prepBowerClean = (retrieveConfig, opts) ->
 registerCommand = (program, retrieveConfig) ->
   program
     .command('bower')
-    .option("-D, --debug", "run in debug mode")
+    .option("-D, --mdebug", "run in debug mode")
     .description("Run bower install")
     .action (opts) ->
       _prepBowerInstall retrieveConfig, opts
 
   program
     .command('bower:install <names>')
-    .option("-D, --debug", "run in debug mode")
+    .option("-D, --mdebug", "run in debug mode")
     .option("-d, --savedev", "save to dev dependencies instead of dependencies")
     .description("Install a library and update the bower.json accordingly")
     .action (names, opts) ->
@@ -73,7 +74,7 @@ registerCommand = (program, retrieveConfig) ->
   program
     .command('bower:clean')
     .option("-c, --cache", "also clean the cache")
-    .option("-D, --debug", "run in debug mode")
+    .option("-D, --mdebug", "run in debug mode")
     .description("Removes all discoverable installed bower modules from source code and removes temp directory.")
     .action (opts) ->
       _prepBowerClean retrieveConfig, opts
