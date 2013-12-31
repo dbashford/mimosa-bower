@@ -16,11 +16,8 @@ transforms = {}
 # option removes that common js directory. "none" will copy
 # the assets into the vendor directory without modification.
 
-_isCSS = (filePath) ->
-  (/.css$/).test filePath
-
 _isJavaScript = (filePath) ->
-  (/.js$/).test filePath
+  (/.js$/).test(filePath) or (/.coffee$/).test(filePath)
 
 _replacePathPieces = (mimosaConfig, aPath) ->
   unless mimosaConfig.bower.copy.pathMod
