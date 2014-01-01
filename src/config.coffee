@@ -72,7 +72,7 @@ exports.placeholder = ->
                                     # files. mainOverrides packages can also be provided an object
                                     # in addition to string paths. The object maps input paths to
                                     # output paths and allow for specific placement of files and
-                                    # folders. Ex {"json2":{"json2.js":"json-utils/json2.js"}. In
+                                    # folders. Ex {"json2":[{"json2.js":"json-utils/json2.js"}]. In
                                     # this case the "json2.js" file will be placed in
                                     # "json-utils/json2.js" in the vendor.javascripts folder.
         # strategy: "packageRoot"   # The copying strategy. "vendorRoot" places all files at the
