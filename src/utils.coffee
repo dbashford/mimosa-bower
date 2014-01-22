@@ -115,6 +115,19 @@ _isPathExcluded = (copy, filePath) ->
   else
     copy.exclude.indexOf(filePath) > -1
 
+_cleanNames = (installedNames, paths) ->
+  pathLibNames = Object.keys(paths)
+  if pathLibNames.length is installedNames.length
+    return installedNames
+
+  cleanNames = []
+  installedNames.forEach (name) ->
+    if pathLibNames.indexOf(name) > -1
+      cleanNames.push name
+    else
+      logger.warn "Bower could not find path for package [[ #{name} ]], is it a valid Bower package?"
+  cleanNames
+
 exports.ensureBowerConfig = (mimosaConfig) ->
   bowerJsonPath = path.join mimosaConfig.root, "bower.json"
   try
@@ -133,6 +146,7 @@ exports.makeDirectory = (folder) ->
 
 exports.gatherPathConfigs = (mimosaConfig, installedNames, cb) ->
   bower.commands.list({paths: true, relative:false}).on 'end', (paths) ->
-    resolvedPaths = _resolvePaths mimosaConfig, installedNames, paths
+    cleanedNames = _cleanNames installedNames, paths
+    resolvedPaths = _resolvePaths mimosaConfig, cleanedNames, paths
     copyConfigs = strategy mimosaConfig, resolvedPaths
     cb copyConfigs
