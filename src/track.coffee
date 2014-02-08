@@ -4,9 +4,10 @@ path = require 'path'
 fs = require 'fs'
 
 _ = require 'lodash'
-logger = require 'logmimosa'
 
 utils = require "./utils"
+
+logger = null
 
 _writeJSON = (json, outPath) ->
   jsonString = JSON.stringify json, null, 2
@@ -32,6 +33,9 @@ _isEqual = (obj1, obj2) ->
   JSON.stringify(obj1) is JSON.stringify(obj2)
 
 exports.track = (mimosaConfig, installedFiles, appendIntalledFiles) ->
+  unless logger
+    logger = mimosaConfig.log
+
   bowerConfigOutPath = _lastMimosaConfigJSONPath mimosaConfig
 
   currentBowerConfig = _.cloneDeep(mimosaConfig.bower)
@@ -45,6 +49,9 @@ exports.track = (mimosaConfig, installedFiles, appendIntalledFiles) ->
   _writeInstalledFiles mimosaConfig, installedFiles, appendIntalledFiles
 
 exports.removeTrackFiles = (mimosaConfig) ->
+  unless logger
+    logger = mimosaConfig.log
+
   [_lastInstallBowerJSONPath(mimosaConfig)
   _lastMimosaConfigJSONPath(mimosaConfig)
   _lastInstalledFileListPath(mimosaConfig)].forEach (filepath) ->
@@ -52,6 +59,9 @@ exports.removeTrackFiles = (mimosaConfig) ->
       fs.unlinkSync filepath
 
 exports.getPreviousInstalledFileList = (mimosaConfig) ->
+  unless logger
+    logger = mimosaConfig.log
+
   installedFilePath = _lastInstalledFileListPath mimosaConfig
   try
     require installedFilePath
@@ -76,14 +86,17 @@ _writeInstalledFiles = (mimosaConfig, installedFiles, appendIntalledFiles) ->
   _writeJSON filesMinusRoot, outPath
 
 exports.isInstallNeeded = (mimosaConfig) ->
+  unless logger
+    logger = mimosaConfig.log
+
   lastIntalledPath = _lastInstallBowerJSONPath mimosaConfig
   if require.cache[lastIntalledPath]
     delete require.cache[lastIntalledPath]
   try
     oldBowerJSON = require lastIntalledPath
-    logger.debug "Found old bower json"
+    logger.debug "Found old [[ bower.json ]]"
   catch err
-    logger.debug "Could not find old bower json, install needed", err
+    logger.debug "Could not find old [[ bower.json ]], install needed", err
     return true
 
   try

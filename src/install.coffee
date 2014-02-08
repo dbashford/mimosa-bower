@@ -5,11 +5,12 @@ fs = require 'fs'
 
 bower = require "bower"
 wrench = require "wrench"
-logger = require "logmimosa"
 
 clean = require "./clean"
 utils = require "./utils"
 track = require "./track"
+
+logger = null
 
 _install = (mimosaConfig, _installOptions, cb) ->
   bower.config.directory = mimosaConfig.bower.bowerDir.path
@@ -31,7 +32,7 @@ _install = (mimosaConfig, _installOptions, cb) ->
     .on('log', (log) ->
       if log.level is "action" and log.id is "install"
         if logger.isDebug
-          logger.debug "Installed the following into #{mimosaConfig.bower.bowerDir.path}: " + log.data.endpoint.name
+          logger.debug "Installed the following into [[ #{mimosaConfig.bower.bowerDir.path} ]]: " + log.data.endpoint.name
         installs.push log
       else if log.level is 'conflict' and log.id is 'solved' and log.data.forced
         _logForcedMessage log
@@ -100,6 +101,9 @@ _postInstall = (mimosaConfig, isSingleLibraryInstall, next) ->
       next() if next
 
 exports.installLibrary = (mimosaConfig, opts) ->
+  unless logger
+    logger = mimosaConfig.log
+
   hasBowerConfig = utils.ensureBowerConfig(mimosaConfig)
   libraryOptions =
     names: opts.names
@@ -109,6 +113,9 @@ exports.installLibrary = (mimosaConfig, opts) ->
   _install mimosaConfig, libraryOptions, _postInstall(mimosaConfig, true)
 
 exports.bowerInstall = (mimosaConfig, options, next) ->
+  unless logger
+    logger = mimosaConfig.log
+
   hasBowerConfig = utils.ensureBowerConfig mimosaConfig
   unless hasBowerConfig
     next() if next

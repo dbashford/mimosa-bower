@@ -4,10 +4,11 @@ fs = require 'fs'
 path = require 'path'
 
 bower = require "bower"
-logger = require "logmimosa"
 wrench = require "wrench"
 
 strategy = require './strategy'
+
+logger = null
 
 _handlePackageJson = (aPath) ->
   packageJsonPath = path.join aPath, "package.json"
@@ -129,6 +130,7 @@ _cleanNames = (installedNames, paths) ->
   cleanNames
 
 exports.ensureBowerConfig = (mimosaConfig) ->
+  logger = mimosaConfig.log
   bowerJsonPath = path.join mimosaConfig.root, "bower.json"
   try
     require bowerJsonPath
@@ -141,10 +143,10 @@ exports.ensureBowerConfig = (mimosaConfig) ->
 
 exports.makeDirectory = (folder) ->
   unless fs.existsSync folder
-    logger.debug "Making folder [[ #{folder} ]]"
     wrench.mkdirSyncRecursive folder, 0o0777
 
 exports.gatherPathConfigs = (mimosaConfig, installedNames, cb) ->
+  logger = mimosaConfig.log
   bower.commands.list({paths: true, relative:false}).on 'end', (paths) ->
     cleanedNames = _cleanNames installedNames, paths
     resolvedPaths = _resolvePaths mimosaConfig, cleanedNames, paths

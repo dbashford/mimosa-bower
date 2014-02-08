@@ -3,7 +3,6 @@
 path = require "path"
 
 _ = require "lodash"
-logger = require "logmimosa"
 
 exports.defaults = ->
   bower:

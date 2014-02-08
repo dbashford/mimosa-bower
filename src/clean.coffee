@@ -6,10 +6,11 @@ path = require 'path'
 _ = require 'lodash'
 bower = require "bower"
 wrench = require "wrench"
-logger = require "logmimosa"
 
 utils = require './utils'
 track = require './track'
+
+logger = null
 
 _removeFile = (fileName) ->
   try
@@ -34,7 +35,7 @@ _removeDirs = (dirs) ->
 exports.cleanTempDir = cleanTempDir = (mimosaConfig, force) ->
   if (force or mimosaConfig.bower.bowerDir.clean) and fs.existsSync mimosaConfig.bower.bowerDir.pathFull
     wrench.rmdirSyncRecursive mimosaConfig.bower.bowerDir.pathFull
-    logger.info "Cleaned temp bower output directory [[ #{mimosaConfig.bower.bowerDir.pathFull} ]]"
+    mimosaConfig.log.info "Cleaned temp bower output directory [[ #{mimosaConfig.bower.bowerDir.pathFull} ]]"
 
 _cleanEmptyDirs = (mimosaConfig, packages) ->
   jsDirs = []
@@ -90,6 +91,8 @@ _cleanFilesViaTrackingInfo = (mimosaConfig) ->
   logger.success "Bower files cleaned."
 
 exports.bowerClean = (mimosaConfig, opts) ->
+  logger = mimosaConfig.log
+
   hasBowerConfig = utils.ensureBowerConfig mimosaConfig
   unless hasBowerConfig
     return

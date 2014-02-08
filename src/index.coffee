@@ -2,7 +2,6 @@
 
 path = require 'path'
 
-logger = require "logmimosa"
 watcher = require "chokidar"
 
 config = require './config'
@@ -10,6 +9,7 @@ clean = require './clean'
 install = require './install'
 
 registration = (mimosaConfig, register) ->
+
   # unless there is no means to determine if installs need to happen...
   unless mimosaConfig.bower.copy.trackChanges is false and mimosaConfig.bower.copy.clean is true
     register ['preBuild'], 'init', install.bowerInstall
@@ -22,36 +22,27 @@ _watch = (mimosaConfig) ->
   watcher.watch(bowerJsonPath, {persistent: true}).on 'change', ->
     install.bowerInstall mimosaConfig
 
-_debug = (opts) ->
-  if opts.mdebug
-    opts.debug = true
-    logger.setDebug()
-    process.env.DEBUG = true
-
 _callIfModuleIncluded = (mimosaConfig, opts, cb) ->
   ms = mimosaConfig.modules
   if ms.indexOf("bower") > -1 or ms.indexOf("mimosa-bower") > -1
     cb mimosaConfig, opts
   else
-    logger.error """
+    mimosaConfig.log.error """
       You have called the bower command on a project that does not have bower included.
       To include bower, add "bower" to the "modules" array.
       """
 
 _prepBowerInstall = (retrieveConfig, opts) ->
-  _debug opts
-  retrieveConfig false, (mimosaConfig) ->
+  retrieveConfig false, !!opts.mdebug, (mimosaConfig) ->
     _callIfModuleIncluded mimosaConfig, opts, install.bowerInstall
 
 _prepBowerLibraryInstall = (retrieveConfig, names, opts) ->
   opts.names = names
-  _debug opts
-  retrieveConfig false, (mimosaConfig) ->
+  retrieveConfig false, !!opts.mdebug, (mimosaConfig) ->
     _callIfModuleIncluded mimosaConfig, opts, install.installLibrary
 
 _prepBowerClean = (retrieveConfig, opts) ->
-  _debug opts
-  retrieveConfig false, (mimosaConfig) ->
+  retrieveConfig false, !!opts.mdebug, (mimosaConfig) ->
     _callIfModuleIncluded mimosaConfig, opts, clean.bowerClean
 
 registerCommand = (program, retrieveConfig) ->

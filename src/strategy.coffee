@@ -3,8 +3,8 @@
 path = require 'path'
 
 _ = require 'lodash'
-logger = require 'logmimosa'
 
+logger = null
 transforms = {}
 
 # The copying strategy. "vendorRoot" places all files at the
@@ -88,6 +88,8 @@ determineTransform = (mimosaConfig, pack) ->
   transforms[theTransform]
 
 module.exports = (mimosaConfig, resolvedPaths) ->
+  logger = mimosaConfig.log
+
   copyFileConfigs = []
   for lib, paths of resolvedPaths
     theTransform = determineTransform mimosaConfig, lib
