@@ -31,7 +31,7 @@ _install = (mimosaConfig, _installOptions, cb) ->
   bower.commands.install(names, installOpts)
     .on('log', (log) ->
       if log.level is "action" and log.id is "install"
-        if logger.isDebug
+        if logger.isDebug()
           logger.debug "Installed the following into [[ #{mimosaConfig.bower.bowerDir.path} ]]: " + log.data.endpoint.name
         installs.push log
       else if log.level is 'conflict' and log.id is 'solved' and log.data.forced
@@ -83,7 +83,7 @@ _postInstall = (mimosaConfig, isSingleLibraryInstall, next) ->
       if mimosaConfig.bower.copy.enabled
         installedNames = installs.map (install) -> install.data.endpoint.name
         return utils.gatherPathConfigs mimosaConfig, installedNames, (copyConfigs) ->
-          if logger.isDebug
+          if logger.isDebug()
             logger.debug "Going to move the following copyConfigurations"
             logger.debug JSON.stringify copyConfigs, null, 2
 
