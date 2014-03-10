@@ -23,6 +23,18 @@ _handlePackageJson = (aPath) ->
     if packageJson.main
       mainPath = path.join aPath, packageJson.main
       if fs.existsSync mainPath
+
+        pathStat = fs.statSync mainPath
+        if pathStat.isDirectory()
+          # handle cases where main is both file and directory, default to file
+          # https://github.com/SlexAxton/require-handlebars-plugin/tree/v0.8.0
+          if fs.existsSync( mainPath + ".js" )
+            mainPath = mainPath + ".js"
+          else
+            mainFolderIndexPath = path.join mainPath, "index.js"
+            if fs.existsSync( mainFolderIndexPath )
+              mainPath = mainFolderIndexPath
+
         details.main = mainPath
 
     details.dependencies = packageJson.dependencies ? undefined

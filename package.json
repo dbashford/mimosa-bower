@@ -1,6 +1,6 @@
 {
   "name": "mimosa-bower",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "homepage": "http://www.mimosa.io",
   "author": "David Bashford",
   "description": "A Bower integration module for Mimosa",
