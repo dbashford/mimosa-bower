@@ -82,7 +82,8 @@ _writeInstalledFiles = (mimosaConfig, installedFiles, appendIntalledFiles) ->
 
   # remove dupes, then sort to avoid unnecessary diffs in file
   filesMinusRoot = _.uniq filesMinusRoot
-  filesMinusRoot = _.sortBy filesMinusRoot, (i) -> i.length
+  filesMinusRoot.sort()
+  #= _.sortBy filesMinusRoot, (i) -> i.length
   _writeJSON filesMinusRoot, outPath
 
 exports.isInstallNeeded = (mimosaConfig) ->
