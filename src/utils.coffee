@@ -3,10 +3,7 @@
 fs = require 'fs'
 path = require 'path'
 
-bower = require "bower"
 wrench = require "wrench"
-
-strategy = require './strategy'
 
 logger = null
 
@@ -159,8 +156,10 @@ exports.makeDirectory = (folder) ->
 
 exports.gatherPathConfigs = (mimosaConfig, installedNames, cb) ->
   logger = mimosaConfig.log
+  bower = require "bower"
   bower.commands.list({paths: true, relative:false}).on 'end', (paths) ->
     cleanedNames = _cleanNames installedNames, paths
     resolvedPaths = _resolvePaths mimosaConfig, cleanedNames, paths
+    strategy = require './strategy'
     copyConfigs = strategy mimosaConfig, resolvedPaths
     cb copyConfigs

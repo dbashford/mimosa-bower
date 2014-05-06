@@ -2,16 +2,13 @@
 
 path = require 'path'
 
-watcher = require "chokidar"
-
 config = require './config'
-clean = require './clean'
-install = require './install'
 
 registration = (mimosaConfig, register) ->
 
   # unless there is no means to determine if installs need to happen...
   unless mimosaConfig.bower.copy.trackChanges is false and mimosaConfig.bower.copy.clean is true
+    install = require './install'
     register ['preBuild'], 'init', install.bowerInstall
 
   if mimosaConfig.isWatch and mimosaConfig.bower.watch
@@ -19,7 +16,9 @@ registration = (mimosaConfig, register) ->
 
 _watch = (mimosaConfig) ->
   bowerJsonPath = path.join mimosaConfig.root, "bower.json"
+  watcher = require "chokidar"
   watcher.watch(bowerJsonPath, {persistent: true}).on 'change', ->
+    install = require './install'
     install.bowerInstall mimosaConfig
 
 _callIfModuleIncluded = (mimosaConfig, opts, cb) ->
@@ -34,15 +33,18 @@ _callIfModuleIncluded = (mimosaConfig, opts, cb) ->
 
 _prepBowerInstall = (retrieveConfig, opts) ->
   retrieveConfig false, !!opts.mdebug, (mimosaConfig) ->
+    install = require './install'
     _callIfModuleIncluded mimosaConfig, opts, install.bowerInstall
 
 _prepBowerLibraryInstall = (retrieveConfig, names, opts) ->
   opts.names = names
   retrieveConfig false, !!opts.mdebug, (mimosaConfig) ->
+    install = require './install'
     _callIfModuleIncluded mimosaConfig, opts, install.installLibrary
 
 _prepBowerClean = (retrieveConfig, opts) ->
   retrieveConfig false, !!opts.mdebug, (mimosaConfig) ->
+    clean = require './clean'
     _callIfModuleIncluded mimosaConfig, opts, clean.bowerClean
 
 registerCommand = (program, retrieveConfig) ->

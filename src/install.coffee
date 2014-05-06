@@ -3,14 +3,11 @@
 path = require 'path'
 fs = require 'fs'
 
-bower = require "bower"
-wrench = require "wrench"
-
-clean = require "./clean"
 utils = require "./utils"
 track = require "./track"
 
 logger = null
+bower = null
 
 _install = (mimosaConfig, _installOptions, cb) ->
   bower.config.directory = mimosaConfig.bower.bowerDir.path
@@ -88,6 +85,7 @@ _postInstall = (mimosaConfig, isSingleLibraryInstall, next) ->
             logger.debug JSON.stringify copyConfigs, null, 2
 
           installFiles = _moveInstalledLibs copyConfigs
+          clean = require "./clean"
           clean.cleanTempDir mimosaConfig
 
           if mimosaConfig.bower.copy.trackChanges
@@ -104,6 +102,9 @@ exports.installLibrary = (mimosaConfig, opts) ->
   unless logger
     logger = mimosaConfig.log
 
+  unless bower
+    bower = require "bower"
+
   hasBowerConfig = utils.ensureBowerConfig(mimosaConfig)
   libraryOptions =
     names: opts.names
@@ -115,6 +116,9 @@ exports.installLibrary = (mimosaConfig, opts) ->
 exports.bowerInstall = (mimosaConfig, options, next) ->
   unless logger
     logger = mimosaConfig.log
+
+  unless bower
+    bower = require "bower"
 
   hasBowerConfig = utils.ensureBowerConfig mimosaConfig
   unless hasBowerConfig

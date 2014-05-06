@@ -5,12 +5,11 @@ fs = require 'fs'
 
 _ = require 'lodash'
 
-utils = require "./utils"
-
 logger = null
 
 _writeJSON = (json, outPath) ->
   jsonString = JSON.stringify json, null, 2
+  utils = require "./utils"
   utils.makeDirectory path.dirname(outPath)
   fs.writeFileSync outPath, jsonString
 

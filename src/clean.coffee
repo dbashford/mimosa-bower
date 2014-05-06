@@ -4,13 +4,12 @@ fs = require 'fs'
 path = require 'path'
 
 _ = require 'lodash'
-bower = require "bower"
 wrench = require "wrench"
 
 utils = require './utils'
-track = require './track'
 
 logger = null
+bower = null
 
 _removeFile = (fileName) ->
   try
@@ -80,6 +79,7 @@ _cleanFilesViaBower = (mimosaConfig) ->
       logger.success "Bower files cleaned."
 
 _cleanFilesViaTrackingInfo = (mimosaConfig) ->
+  track = require './track'
   installedFiles = track.getPreviousInstalledFileList mimosaConfig
   if installedFiles.length is 0
     logger.info "No files to clean."
@@ -92,6 +92,9 @@ _cleanFilesViaTrackingInfo = (mimosaConfig) ->
 
 exports.bowerClean = (mimosaConfig, opts) ->
   logger = mimosaConfig.log
+
+  unless bower
+    bower = require "bower"
 
   hasBowerConfig = utils.ensureBowerConfig mimosaConfig
   unless hasBowerConfig
