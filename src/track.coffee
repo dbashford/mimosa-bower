@@ -17,7 +17,13 @@ _readBowerJSON = (mimosaConfig) ->
   bowerJSONPath = path.join mimosaConfig.root, "bower.json"
   if require.cache[bowerJSONPath]
     delete require.cache[bowerJSONPath]
-  require bowerJSONPath
+  try
+    bowerJSON = require bowerJSONPath
+  catch err
+    logger.error "Error reading bower.json [[ #{bowerJSONPath} ]]"
+    logger.error err
+
+  bowerJSON
 
 _lastInstallBowerJSONPath = (mimosaConfig) ->
   path.join mimosaConfig.root, '.mimosa', 'bower', 'last-install.json'
@@ -43,9 +49,11 @@ exports.track = (mimosaConfig, installedFiles, appendIntalledFiles) ->
   _writeJSON currentBowerConfig, bowerConfigOutPath
 
   bowerJSON = _readBowerJSON mimosaConfig
-  bowerJSONOutPath = _lastInstallBowerJSONPath mimosaConfig
-  _writeJSON bowerJSON, bowerJSONOutPath
-  _writeInstalledFiles mimosaConfig, installedFiles, appendIntalledFiles
+
+  if bowerJSON
+    bowerJSONOutPath = _lastInstallBowerJSONPath mimosaConfig
+    _writeJSON bowerJSON, bowerJSONOutPath
+    _writeInstalledFiles mimosaConfig, installedFiles, appendIntalledFiles
 
 exports.removeTrackFiles = (mimosaConfig) ->
   unless logger
@@ -111,8 +119,11 @@ exports.isInstallNeeded = (mimosaConfig) ->
   currentBowerConfig.copy.exclude = []
   currentBowerJSON = _readBowerJSON mimosaConfig
 
-  if _isEqual(currentBowerConfig, oldBowerConfig) and _isEqual(currentBowerJSON, oldBowerJSON)
-    logger.debug "Old bower config matches current, and older bower.json matches current"
-    false
+  if currentBowerJSON
+    if _isEqual(currentBowerConfig, oldBowerConfig) and _isEqual(currentBowerJSON, oldBowerJSON)
+      logger.debug "Old bower config matches current, and older bower.json matches current"
+      false
+    else
+      true
   else
-    true
+    false
