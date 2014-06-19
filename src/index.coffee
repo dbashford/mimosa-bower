@@ -4,6 +4,8 @@ path = require 'path'
 
 config = require './config'
 
+track = require './track'
+
 registration = (mimosaConfig, register) ->
 
   # unless there is no means to determine if installs need to happen...
@@ -78,3 +80,4 @@ module.exports =
   defaults:        config.defaults
   placeholder:     config.placeholder
   validate:        config.validate
+  isInstallNeeded: track.isInstallNeeded
