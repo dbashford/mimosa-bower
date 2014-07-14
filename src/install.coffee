@@ -95,7 +95,7 @@ _postInstall = (mimosaConfig, isSingleLibraryInstall, next) ->
       else
         next() if next
     else
-      logger.info "No bower packages to install."
+      logger.info "No bower packages were installed."
       next() if next
 
 exports.installLibrary = (mimosaConfig, opts) ->
