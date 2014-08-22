@@ -85,7 +85,7 @@ _writeInstalledFiles = (mimosaConfig, installedFiles, appendIntalledFiles) ->
 
   # if installing single library, append it to existing list
   if appendIntalledFiles
-    filesMinusRoot = filesMinusRoot.concat exports.getPreviousInstalledFileList()
+    filesMinusRoot = filesMinusRoot.concat exports.getPreviousInstalledFileList(mimosaConfig)
 
   # remove dupes, then sort to avoid unnecessary diffs in file
   filesMinusRoot = _.uniq filesMinusRoot
