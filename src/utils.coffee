@@ -68,6 +68,10 @@ _resolvePaths = (mimosaConfig, names, paths) ->
 
   resolvedPaths = {}
   for lib, paths of installedPaths
+    unless path.sep == '/'
+      paths = paths.map (filePath) ->
+        filePath.split('/').join(path.sep)
+
     resolvedPaths[lib] = []
     fullLibPath = path.join mimosaConfig.bower.bowerDir.pathFull, lib
 
