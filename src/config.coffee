@@ -4,6 +4,8 @@ path = require "path"
 
 _ = require "lodash"
 
+regexRegex = /^\/.+\/$/
+
 exports.defaults = ->
   bower:
     watch: true
@@ -144,6 +146,16 @@ exports.validate = (config, validators) ->
             b.copy.defaultStrategy = b.copy.strategy["*"]
       else
         errors.push "bower.copy.strategy must be a string or an object"
+
+      if errors.length is 0
+        b.copy.strategyRegexs = []
+        Object.keys(b.copy.strategy).forEach (stratKey) ->
+          # is strat key a regex?
+          if regexRegex.test stratKey
+            stratRegex = new RegExp(stratKey.substring(1, stratKey.length - 1))
+            b.copy.strategyRegexs.push
+              stratRegex: stratRegex
+              stratVal: b.copy.strategy[stratKey]
 
       validators.ifExistsFileExcludeWithRegexAndString(errors, "bower.copy.exclude", b.copy, b.bowerDir.pathFull)
 

@@ -84,7 +84,18 @@ transforms.custom = (mimosaConfig, lib, inPath) ->
       path.join mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot, modPath
 
 determineTransform = (mimosaConfig, pack) ->
-  theTransform = mimosaConfig.bower.copy.strategy[pack] ? mimosaConfig.bower.copy.defaultStrategy
+  # exact string match always wins
+  theTransform = mimosaConfig.bower.copy.strategy[pack]
+
+  unless theTransform
+    # check strat regexes for a match
+    for strat in mimosaConfig.bower.copy.strategyRegexs
+      if strat.stratRegex.test pack
+        theTransform = strat.stratVal
+
+    # if still no transform, use default
+    theTransform = theTransform ? mimosaConfig.bower.copy.defaultStrategy
+
   transforms[theTransform]
 
 module.exports = (mimosaConfig, resolvedPaths) ->
