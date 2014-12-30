@@ -99,8 +99,10 @@ _resolvePaths = (mimosaConfig, names, paths) ->
 
             else
               if mimosaConfig.bower.copy.unknownMainFullCopy
-                logger.warn "Cannot determine main file for [[ #{lib} ]] at [[ #{aPath} ]]. Copying entire folder because unknownMainFullCopy is set to true. Consider adding a mainOverrides entry."
-                mimosaConfig.bower.copy.strategy[lib] = 'none'
+                # logger.warn "Cannot determine main file for [[ #{lib} ]] at [[ #{aPath} ]]. Copying entire folder because unknownMainFullCopy is set to true."
+                # set to fullCopy which be properly matched to
+                # file path transform for files, either none or together
+                mimosaConfig.bower.copy.strategy[lib] = 'fullCopy'
                 _processOverridesList mimosaConfig, [''], fullLibPath, resolvedPaths[lib]
               else
                 logger.warn "Cannot determine main file for [[ #{lib} ]] at [[ #{aPath} ]]. Consider adding a mainOverrides entry or setting unknownMainFullCopy to true."

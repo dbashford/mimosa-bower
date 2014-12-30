@@ -89,17 +89,28 @@ transforms.custom = (mimosaConfig, lib, inPath) ->
       path.join mimosaConfig.vendor.stylesheets, mimosaConfig.bower.copy.outRoot, modPath
 
 determineTransform = (mimosaConfig, pack) ->
-  # exact string match always wins
-  theTransform = mimosaConfig.bower.copy.strategy[pack]
+  c = mimosaConfig.bower.copy
 
-  unless theTransform
+  # exact string match always wins
+  theTransform = c.strategy[pack]
+
+  # if transform not present, or transform set to full
+  # copy, then need to check regexes to see if they set
+  # any packages to 'together' as fullCopy can be
+  # overridden by 'together'
+  if not theTransform or theTransform is "fullCopy"
     # check strat regexes for a match
-    for strat in mimosaConfig.bower.copy.strategyRegexs
+    for strat in c.strategyRegexs
       if strat.stratRegex.test pack
         theTransform = strat.stratVal
 
     # if still no transform, use default
-    theTransform = theTransform ? mimosaConfig.bower.copy.defaultStrategy
+    theTransform = theTransform ? c.defaultStrategy
+
+  # if original strat is fullCopy, and the transform hasn't been set to
+  # together, then fall back to 'none' for copying strategy
+  if c.strategy[pack] is "fullCopy" and theTransform isnt "together"
+    theTransform = "none"
 
   transforms[theTransform]
 
