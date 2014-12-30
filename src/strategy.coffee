@@ -31,6 +31,11 @@ _replacePathPieces = (mimosaConfig, aPath) ->
 
   path.join mimosaConfig.bower.bowerDir.pathFull, packagePathOutPieces.join(path.sep)
 
+transforms.together = (mimosaConfig, inPath) ->
+  # nuke the bowerDir path, leave lib in place
+  modInPath = inPath.replace mimosaConfig.bower.bowerDir.pathFull + path.sep, ''
+  path.join mimosaConfig.watch.sourceDir, mimosaConfig.bower.copy.togetherRoot, modInPath
+
 transforms.vendorRoot = (mimosaConfig, inPath) ->
   fileName = path.basename inPath
   if _isJavaScript inPath
