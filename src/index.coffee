@@ -2,8 +2,9 @@
 
 path = require 'path'
 
-config = require './config'
+_ = require 'lodash'
 
+config = require './config'
 track = require './track'
 
 registration = (mimosaConfig, register) ->
@@ -24,8 +25,10 @@ _watch = (mimosaConfig) ->
     install.bowerInstall mimosaConfig
 
 _callIfModuleIncluded = (mimosaConfig, opts, cb) ->
-  ms = mimosaConfig.modules
-  if ms.indexOf("bower") > -1 or ms.indexOf("mimosa-bower") > -1
+  bowerModule = _.find mimosaConfig.modules, (mod) ->
+    mod.indexOf("bower") is 0 || mod.indexOf("mimosa-bower") is 0
+
+  if bowerModule
     cb mimosaConfig, opts
   else
     mimosaConfig.log.error """
