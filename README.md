@@ -107,7 +107,7 @@ dist/
 
 When packages are installed, mimosa-bower moves the `main` files into the vendor directories as indicated by Mimosa's `vendor` config. The `bower.copy.strategy` and/or `bower.copy.mainOverrides` determine how those `main` files are copied over.
 
-#### Strategy: packageRoot (the default strategy)
+#### Strategy: `packageRoot` (the default strategy)
 
 `packageRoot` places files inside a folder named for the package within the appropriate `vendor` directory.  This strategy will flatten any folder structure. This strategy will also pull apart `.js` files and place them in `vendor.javascripts` while everything else goes in `stylesheets`.
 
@@ -128,7 +128,7 @@ For leaflet.draw, an example `packageRoot` output given Mimosa's defaults would 
 
 Note that non-js files end up in `stylesheets` and note that the folder structure has been flatted (there is no `images` folder).
 
-#### Strategy: vendorRoot
+#### Strategy: `vendorRoot`
 
 `vendorRoot` places files directly in the `vendor` folder.  This strategy will flatten any folder structure.  This strategy will also pull apart `.js` files and place them in `vendor.javascripts` while everything else goes in `stylesheets`.
 
@@ -147,7 +147,7 @@ For leaflet.draw, an example `vendorRoot` output given Mimosa's defaults would b
 
 Note that non-js files end up in `stylesheets` and note that the folder structure has been flatted (there is no `images` folder).
 
-#### Strategy: none
+#### Strategy: `none`
 
 `none` is the same as `packageRoot`, but it will not flatten folder structures.  This strategy will pull apart `.js` files and place them in `vendor.javascripts` while everything else goes in `stylesheets`.
 
@@ -170,7 +170,7 @@ For leaflet.draw, an example `none` output given Mimosa's defaults would be:
 
 Note that non-js files end up in `stylesheets` and note that the folder structure has not been flatted (there is an `images` and `dist` folder).
 
-#### Strategy: together
+#### Strategy: `together`
 
 `together` allows packages that contained mixed content, like Polymer components, to remain together. Anything having a strategy of `together` will be placed in the `bower.copy.togetherRoot` folder which is set to `components` by default.  `togetherRoot` is relative to `watch.sourceDir` so it sits at the same level as `stylesheets` and `javascripts`.  `together` will not flatten directories.
 
