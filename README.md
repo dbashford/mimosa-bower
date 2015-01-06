@@ -1,8 +1,6 @@
 mimosa-bower
 ===========
 
-# Overview
-
 This is a Bower integration module for the Mimosa build tool.
 
 For more information regarding Bower, see http://bower.io/.
@@ -249,7 +247,7 @@ bower: {
 #### `bower.watch` boolean
 When `true`, mimosa-bower will watch the `bower.json` for changes, and when the file changes, run a Bower install.
 
-#### `bower.bowerDir.path` string 
+#### `bower.bowerDir.path` string
 The path to where mimosa-bower will initially install Bower assets before moving the key assets into the `watch.sourceDir`. This is relative to the root of the project.
 
 #### `bower.bowerDir.clean` boolean
@@ -264,7 +262,7 @@ See [When will a Bower install be kicked off?](#when-will-a-bower-install-be-kic
 #### `bower.copy.outRoot` string
 Path to append to the vendor directories before copying in assets. All copied assets would go inside this directory. Example: "bower-managed". `null`, the default, means no `outRoot` is applied.
 
-#### `bower.copy.exclude`  array of strings/regexes 
+#### `bower.copy.exclude`  array of strings/regexes
 Matches files to exclude from copying. Paths should be relative to the `bowerDir.path` or absolute. String paths must include the file name.
 
 #### `bower.copy.unknownMainFullCopy` boolean
