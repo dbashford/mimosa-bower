@@ -246,19 +246,44 @@ bower: {
 }
 ```
 
-* `bower.watch`, a boolean, when `true`, mimosa-bower will watch the `bower.json` for changes, and when the file changes, run a Bower install.
-* `bower.bowerDir.path`, a string, the path to where mimosa-bower will initially install Bower assets before moving the key assets into the `watch.sourceDir`. This is relative to the root of the project.
-* `bower.bowerDir.clean`, a boolean, indicates whether or not to remove temporary Bower assets after install. Bower downloads entire GitHub repositories, so cleaning them keeps your project from having those kept around.
-* `bower.copy.enabled`, a boolean, indicates whether or not to copy assets out of the `bowerDir.path` and into `watch.sourceDir`.
-* `bower.copy.trackChanges`, a boolean.  See [When will a Bower install be kicked off?](#when-will-a-bower-install-be-kicked-off) above.
-* `bower.copy.outRoot`, a string, path to append to the vendor directories before copying in assets. All copied assets would go inside this directory. Example: "bower-managed". `null`, the default, means no `outRoot` is applied.
-* `bower.copy.exclude`, an array of strings/regexes that match files to exclude from copying. Paths should be relative to the `bowerDir.path` or absolute. String paths must include the file name.
-* `bower.copy.unknownMainFullCopy`, a boolean, when set will force the copy of all Bower module assets into the vendor output directory. This will likely copy a lot of undesirable assets, but if that isn't a problem, setting this property is a quick way to get files copied over without the hassle of configuring `mainOverrides` (below).
-* `bower.copy.mainOverrides`, an object, allows for setting which files should be copied for a package either when the `main` files cannot be determined or when files other than the `main` files are desired. The key for this object is the name of the package. The value is an array of path strings pointing to the package's desired files. The paths should be relative to the root of the package. For example: `{"json2":["json2.js","json_parse.js"]}`. When paths point to directories, all the directory's files will be copied. `mainOverrides` packages can also be provided an object in addition to string paths. The object maps input paths to output paths and allow for specific placement of files and folders. Ex `{"json2":[{"json2.js":"json-utils/json2.js"}]`. In this case the `json2.js` file will be placed in `json-utils/json2.js` in the `vendor.javascripts` folder. If a file is provided as opposed to a directory, the output path must specify the output file name. Any directories copied in this way are copied entirely without manipulation of the folder structure.
-* `bower.copy.strategy`, a string or an object, the copying strategy. See [above docs](#copying-assets-into-a-project-using-strategy-and-mainoverrides) for details on strategies. When using a string, all packages will use the provided `strategy`.  When using an object, the keys should match the names of packages and values should be specific strategy types. The key of `*` provides a default strategy if `packageRoot` is not desired. If only 2 of 10 packages are specified in the object, the rest get the `*`/default strategy. Key names can be a regex, for instance "/^paper-/" will match all packages that start with "paper-".
-* `bower.copy.togetherRoot`, a string, the path, relative to `watch.sourceDir`, where packages with the `together` `strategy` will be placed.
-* `bower.copy.forceLatest`, a boolean, a means to quickly fix any problems with library version collisions. If you want to install the latest `jquery`, but one of your other libraries wants to install an older version the install will fail. This flag will ensure the the latest version is selected and the Bower install will continue. When the `forceLatest` results in a selection, a warning message is logged with the details of which version was picked and which versions were not.
-* `bower.copy.pathMod`, an array of strings or regexes used to strip full pieces of a path from the output file when the selected strategy is `none` or a `mainOverrides` object is used. For example, if a Bower package script is in `packageName/lib/js/foo.js` and `pathMod` is set to ["lib", "js"] the output path would have `lib` and `js` stripped.
+#### `bower.watch` boolean
+When `true`, mimosa-bower will watch the `bower.json` for changes, and when the file changes, run a Bower install.
+
+#### `bower.bowerDir.path` string 
+The path to where mimosa-bower will initially install Bower assets before moving the key assets into the `watch.sourceDir`. This is relative to the root of the project.
+
+#### `bower.bowerDir.clean` boolean
+Indicates whether or not to remove temporary Bower assets after install. Bower downloads entire GitHub repositories, so cleaning them keeps your project from having those kept around.
+
+#### `bower.copy.enabled` boolean
+Indicates whether or not to copy assets out of the `bowerDir.path` and into `watch.sourceDir`.
+
+#### `bower.copy.trackChanges` boolean
+See [When will a Bower install be kicked off?](#when-will-a-bower-install-be-kicked-off) above.
+
+#### `bower.copy.outRoot` string
+Path to append to the vendor directories before copying in assets. All copied assets would go inside this directory. Example: "bower-managed". `null`, the default, means no `outRoot` is applied.
+
+#### `bower.copy.exclude`  array of strings/regexes 
+Matches files to exclude from copying. Paths should be relative to the `bowerDir.path` or absolute. String paths must include the file name.
+
+#### `bower.copy.unknownMainFullCopy` boolean
+When set will force the copy of all Bower module assets into the vendor output directory. This will likely copy a lot of undesirable assets, but if that isn't a problem, setting this property is a quick way to get files copied over without the hassle of configuring `mainOverrides` (below).
+
+#### `bower.copy.mainOverrides` object
+Allows for setting which files should be copied for a package either when the `main` files cannot be determined or when files other than the `main` files are desired. The key for this object is the name of the package. The value is an array of path strings pointing to the package's desired files. The paths should be relative to the root of the package. For example: `{"json2":["json2.js","json_parse.js"]}`. When paths point to directories, all the directory's files will be copied. `mainOverrides` packages can also be provided an object in addition to string paths. The object maps input paths to output paths and allow for specific placement of files and folders. Ex `{"json2":[{"json2.js":"json-utils/json2.js"}]`. In this case the `json2.js` file will be placed in `json-utils/json2.js` in the `vendor.javascripts` folder. If a file is provided as opposed to a directory, the output path must specify the output file name. Any directories copied in this way are copied entirely without manipulation of the folder structure.
+
+#### `bower.copy.strategy` string or object
+The copying strategy. See [above docs](#copying-assets-into-a-project-using-strategy-and-mainoverrides) for details on strategies. When using a string, all packages will use the provided `strategy`.  When using an object, the keys should match the names of packages and values should be specific strategy types. The key of `*` provides a default strategy if `packageRoot` is not desired. If only 2 of 10 packages are specified in the object, the rest get the `*`/default strategy. Key names can be a regex, for instance "/^paper-/" will match all packages that start with "paper-".
+
+#### `bower.copy.togetherRoot` string
+The path, relative to `watch.sourceDir`, where packages with the `together` `strategy` will be placed.
+
+#### `bower.copy.forceLatest` boolean
+A means to quickly fix any problems with library version collisions. If you want to install the latest `jquery`, but one of your other libraries wants to install an older version the install will fail. This flag will ensure the the latest version is selected and the Bower install will continue. When the `forceLatest` results in a selection, a warning message is logged with the details of which version was picked and which versions were not.
+
+#### `bower.copy.pathMod` array of strings/regexes
+Used to strip full pieces of a path from the output file when the selected strategy is `none` or a `mainOverrides` object is used. For example, if a Bower package script is in `packageName/lib/js/foo.js` and `pathMod` is set to ["lib", "js"] the output path would have `lib` and `js` stripped.
 
 ## Example Config 1, `mainOverrides` options
 
