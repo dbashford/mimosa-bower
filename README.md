@@ -1,7 +1,7 @@
 mimosa-bower
 ===========
 
-## Overview
+# Overview
 
 This is a Bower integration module for the Mimosa build tool.
 
@@ -9,7 +9,7 @@ For more information regarding Bower, see http://bower.io/.
 
 For more information regarding Mimosa, see http://mimosa.io.
 
-## What is Bower?
+# What is Bower?
 
 This is how Bower describes itself:
 
@@ -17,13 +17,13 @@ This is how Bower describes itself:
 
 It mentions an "opinionated build stack". This module is an opinionated usage of Bower for Mimosa.
 
-## Usage
+# Usage
 
 ### Including the module
 
 Add `'bower'` to your list of modules.  That's all!  Mimosa will install the module for you when you start `mimosa watch` or `mimosa build`.
 
-### With `mimosa watch` and `mimosa build`
+### During `mimosa watch` and `mimosa build`
 
 When `mimosa watch` or `mimosa build` start, mimosa-bower will attempt to detect if an install is needed and if it is an install will be run before assets are processed.
 
@@ -45,7 +45,7 @@ When mimosa-bower is included in your project, the following commands are availa
 
 `mimosa bower:clean --cache`, in addition to cleaning up installed dependencies, will also clean the Bower cache. This often is necessary when Bower updates, or if packages get updated without new versions.
 
-## Functionality
+# Functionality
 
 Mimosa requires a valid `bower.json` at the root of project (in the same directory as `mimosa-config`).
 
@@ -228,7 +228,7 @@ Mimosa will also watch the `bower.json` for changes while running `mimosa watch`
 
 This can be turned off by setting `bower.watch` to `false`.
 
-## Default Config
+# Default Config
 
 ```javascript
 bower: {
