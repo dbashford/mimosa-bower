@@ -47,17 +47,17 @@ When mimosa-bower is included in your project, the following commands are availa
 
 # Functionality
 
-Mimosa requires a valid `bower.json` at the root of project (in the same directory as `mimosa-config`).
+mimosa-bower requires a valid `bower.json` at the root of project (in the same directory as `mimosa-config`).
 
 ### When will a Bower install be kicked off?
 
-When `mimosa bower`, `mimosa watch` or `mimosa build` are executed, Mimosa will assess whether or not any packages need to be installed and install them to the `bower.bowerDir.path` directory, by default `.mimosa/bower/bower_components`.
+When `mimosa bower`, `mimosa watch` or `mimosa build` are executed, mimosa-bower will assess whether or not any packages need to be installed and install them to the `bower.bowerDir.path` directory, by default `.mimosa/bower/bower_components`.
 
-If `bower.copy.trackChanges` is set to `true` (the default), Mimosa keeps track of two artifacts to help it determine if installs need to occur. First, it keeps track of the `bower.json` that was last used for an install. If the current `bower.json` is different, an install will be executed. Second, Mimosa keeps track of the `bower` section of your project's `mimosa-config` for the last install. If it changes, an install will be executed.
+If `bower.copy.trackChanges` is set to `true` (the default), mimosa-bower keeps track of two artifacts to help it determine if installs need to occur. First, it keeps track of the `bower.json` that was last used for an install. If the current `bower.json` is different, an install will be executed. Second, mimosa-bower keeps track of the `bower` section of your project's `mimosa-config` for the last install. If it changes, an install will be executed.
 
 If `bower.copy.trackChanges` is set to `false` and `bower.bowerDir.clean` is set to `false`, Bower default processing will check to see if an install is necessary based on the contents of the `bower.bowerDir.path`. If it detects that nothing has changed, no install will be run.
 
-If `bower.copy.trackChanges` is set to `false` and `bower.bowerDir.clean` is set to `true` (not recommended), then Mimosa has no way to determine if an install is necessary so the Bower functionality does not register itself to be run during `mimosa watch` and `mimosa build`. In this case it must be executed using the `mimosa bower` command.
+If `bower.copy.trackChanges` is set to `false` and `bower.bowerDir.clean` is set to `true` (not recommended), then mimosa-bower has no way to determine if an install is necessary so the Bower functionality does not register itself to be run during `mimosa watch` and `mimosa build`. In this case it must be executed using the `mimosa bower` command.
 
 ### Where are assets initially copied?
 
@@ -71,7 +71,7 @@ It is the goal of the rest of the configuration, covered below, to decide what a
 
 If `bower.copy.enabled` is set to `true` then mimosa-bower will attempt to copy files from the `bower.bowerDir.path` and into your project's source code.
 
-By default, mimosa-bower expects to find a `main` property in the `bower.json` of any packages it uses. If Mimosa cannot identify the main files for a package because a `main` property hasn't been provided by the package author, Mimosa will indicate that via a message to the console. In cases where the `main` files are not provided, or when you want to include files other than the ones the package author has indicated, you can use `bower.copy.mainOverrides`.
+By default, mimosa-bower expects to find a `main` property in the `bower.json` of any packages it uses. If mimosa-bower cannot identify the main files for a package because a `main` property hasn't been provided by the package author, mimosa-bower will indicate that via a message to the console. In cases where the `main` files are not provided, or when you want to include files other than the ones the package author has indicated, you can use `bower.copy.mainOverrides`.
 
 The [jquery bower.json](https://github.com/jquery/jquery/blob/2.1.3/bower.json) indicates that `jquery.js` is the `main` file. By default mimosa-bower will copy that file in.  If you want the minified file, you would need to provide a `mainOverrides` config.
 
@@ -105,7 +105,7 @@ dist/
     spritesheet.png
 ```
 
-When packages are installed, Mimosa moves the `main` files into the vendor directories as indicated by Mimosa's `vendor` config. The `bower.copy.strategy` and/or `bower.copy.mainOverrides` determine how those `main` files are copied over.
+When packages are installed, mimosa-bower moves the `main` files into the vendor directories as indicated by Mimosa's `vendor` config. The `bower.copy.strategy` and/or `bower.copy.mainOverrides` determine how those `main` files are copied over.
 
 #### Strategy: packageRoot (the default strategy)
 
@@ -224,7 +224,7 @@ The 3rd entry is an object.  This object can be used to take very specific files
 
 ### Auto-Install
 
-Mimosa will also watch the `bower.json` for changes while running `mimosa watch`. If any changes occur, mimosa-bower will immediately kick off a new install of your Bower managed assets.
+mimosa-bower will also watch the `bower.json` for changes while running `mimosa watch`. If any changes occur, mimosa-bower will immediately kick off a new install of your Bower managed assets.
 
 This can be turned off by setting `bower.watch` to `false`.
 
@@ -252,7 +252,7 @@ bower: {
 }
 ```
 
-* `bower.watch`, a boolean, when `true`, Mimosa will watch the `bower.json` for changes, and when the file changes, run a Bower install.
+* `bower.watch`, a boolean, when `true`, mimosa-bower will watch the `bower.json` for changes, and when the file changes, run a Bower install.
 * `bower.bowerDir.path`, a string, the path to where mimosa-bower will initially install Bower assets before moving the key assets into the `watch.sourceDir`. This is relative to the root of the project.
 * `bower.bowerDir.clean`, a boolean, indicates whether or not to remove temporary Bower assets after install. Bower downloads entire GitHub repositories, so cleaning them keeps your project from having those kept around.
 * `bower.copy.enabled`, a boolean, indicates whether or not to copy assets out of the `bowerDir.path` and into `watch.sourceDir`.
