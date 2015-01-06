@@ -23,7 +23,13 @@ It mentions an "opinionated build stack". This module is an opinionated usage of
 
 Add `'bower'` to your list of modules.  That's all!  Mimosa will install the module for you when you start `mimosa watch` or `mimosa build`.
 
-### Commands
+### With `mimosa watch` and `mimosa build`
+
+When `mimosa watch` or `mimosa build` start, mimosa-bower will attempt to detect if an install is needed and if it is an install will be run before assets are processed.
+
+### Additional Commands
+
+When mimosa-bower is included in your project, the following commands are available.
 
 #### `bower`
 
@@ -31,7 +37,13 @@ Add `'bower'` to your list of modules.  That's all!  Mimosa will install the mod
 
 #### `bower:install <names,of,modules> [-d/--savedev]`
 
+`mimosa bower:install` will install one to many modules into your application and save the new modules to the dependencies array of the `bower.json`. To save to the `devDependencies`, add a `[-d/--savedev]` flag. You can even use version numbers when installing modules. Example: `mimosa bower:install backbone,underscore,jquery#1.8.1`
+
 #### `bower:clean [-c/--cache]`
+
+`mimosa bower:clean` will remove all of the Bower installed dependencies from their target directories in the vendor folder. It will also clean up any Bower package related folders that then become empty. Finally it will clean up the `bower.bowerDir.path` folder, removing all the temporary assets.
+
+`mimosa bower:clean --cache`, in addition to cleaning up installed dependencies, will also clean the Bower cache. This often is necessary when Bower updates, or if packages get updated without new versions.
 
 ## Functionality
 
