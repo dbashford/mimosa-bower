@@ -92,7 +92,7 @@ If Bower encounters any version collisions -- for instance if two different pack
 
 A typical way to address collisions is to use the `resolutions` config in the `bower.json`.
 
-### Where do assets get delivered?
+### Copying assets into a project using `strategy` and `mainOverrides`
 
 For the explanations below, I'll use [the leaflet.draw  package](https://github.com/Leaflet/Leaflet.draw/tree/0521a42c4e9bfb336dc62ead1e1492563b3811bd) for an example. leaflet.draw has the following assets as specified by the `main` property in its [`bower.json`](https://github.com/Leaflet/Leaflet.draw/blob/0521a42c4e9bfb336dc62ead1e1492563b3811bd/bower.json#L5-L10).
 
@@ -221,12 +221,6 @@ The 3rd entry is an object.  This object can be used to take very specific files
 /font
   -- the contents of the font-awesome/font directory --
 ```
-
-### Auto-Install
-
-mimosa-bower will also watch the `bower.json` for changes while running `mimosa watch`. If any changes occur, mimosa-bower will immediately kick off a new install of your Bower managed assets.
-
-This can be turned off by setting `bower.watch` to `false`.
 
 # Default Config
 
