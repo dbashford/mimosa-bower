@@ -25,6 +25,13 @@ Add `'bower'` to your list of modules.  That's all!  Mimosa will install the mod
 
 ### Commands
 
+#### `bower`
+
+`mimosa bower` provides one off access to Bower installs without kicking off `mimosa watch` or `mimosa build`.
+
+#### `bower:install <names,of,modules> [-d/--savedev]`
+
+#### `bower:clean [-c/--cache]`
 
 ## Functionality
 
