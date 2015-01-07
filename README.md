@@ -61,7 +61,7 @@ If `bower.copy.trackChanges` is set to `false` and `bower.bowerDir.clean` is set
 
 `bower.bowerDir.path` is the location where all of the package assets are initially copied by Bower. In most cases this include the entire contents of the GitHub repositories for the packages you have selected.
 
-Because it uses entire GitHub repositories, and you probably do not want that code inside your project's source directories, `bower.bowerDir.path` is set to `.mimosa/bower_components`.
+Because it uses entire GitHub repositories, and you probably do not want that code inside your project's source directories, `bower.bowerDir.path` is set to `.mimosa/bower/bower_components`.
 
 It is the goal of the rest of the configuration, covered below, to decide what are the key files from each package, and where in your source directories those files should be placed.  By default, once the assets are copied into your project's source, the content of `bower.bowerDir.path` is cleaned.  To turn this off, set `bower.bowerDir.clean` to `false`.
 
@@ -226,7 +226,7 @@ The 3rd entry is an object.  This object can be used to take very specific files
 bower: {
   watch:true,
   bowerDir: {
-    path: ".mimosa/bower_components",
+    path: ".mimosa/bower/bower_components",
     clean: true
   },
   copy: {
@@ -302,6 +302,6 @@ bower: {
 
 This is from the [polymer demo project](https://github.com/brzpegasus/mimosa-polymer-demo/tree/0c7ea09666505affa910fabe035ccc214a15ffaf).  This example shows the use of the `together` strategy along with regex matching on package names.  In this case the `togetherRoot` isn't changed from its default of `components`.  So the result of this would be that all packages that start with polymer, paper-, core-, or font-, will be placed inside `components` in their entirety.
 
-All other packages, like jquery or requirejs, continue to use the `packageRoot` default strateguy and will be placed in `vendor.javascripts`/`vendor.stylesheets`.
+All other packages, like jquery or requirejs, continue to use the `packageRoot` default strategy and will be placed in `vendor.javascripts`/`vendor.stylesheets`.
 
 `unknownMainFullCopy` means that in cases where the `main` cannot be determined, the entire content of the repo will be used.
