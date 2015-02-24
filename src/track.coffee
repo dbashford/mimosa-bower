@@ -71,7 +71,11 @@ exports.getPreviousInstalledFileList = (mimosaConfig) ->
 
   installedFilePath = _lastInstalledFileListPath mimosaConfig
   try
-    require installedFilePath
+    lastInstalledFiles = require( installedFilePath )
+    if ( process.platform is "win32" )
+      lastInstalledFiles = for installedFile in lastInstalledFiles
+        installedFile.split( "/" ).join( path.sep )
+    lastInstalledFiles
   catch err
     logger.debug err
     []
@@ -82,6 +86,11 @@ _writeInstalledFiles = (mimosaConfig, installedFiles, appendIntalledFiles) ->
   # remove root and path sep from all install paths
   filesMinusRoot = for installedFile in installedFiles
     installedFile.replace mimosaConfig.root + path.sep, ''
+
+  # normalize paths to unix
+  if ( process.platform is "win32" )
+    filesMinusRoot = for installedFile in installedFiles
+      installedFile.split( path.sep ).join( "/" )
 
   # if installing single library, append it to existing list
   if appendIntalledFiles
