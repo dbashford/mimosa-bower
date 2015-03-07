@@ -1,9 +1,7 @@
 "use strict"
 
 path = require 'path'
-
 _ = require 'lodash'
-
 config = require './config'
 track = require './track'
 
@@ -36,29 +34,19 @@ _callIfModuleIncluded = (mimosaConfig, opts, cb) ->
       To include bower, add "bower" to the "modules" array.
       """
 
-_prepBowerInstall = (retrieveConfig, opts) ->
-  retrieveConfig false, !!opts.mdebug, (mimosaConfig) ->
-    install = require './install'
-    _callIfModuleIncluded mimosaConfig, opts, install.bowerInstall
+registerCommand = (program, logger, retrieveConfig) ->
 
-_prepBowerLibraryInstall = (retrieveConfig, names, opts) ->
-  opts.names = names
-  retrieveConfig false, !!opts.mdebug, (mimosaConfig) ->
-    install = require './install'
-    _callIfModuleIncluded mimosaConfig, opts, install.installLibrary
-
-_prepBowerClean = (retrieveConfig, opts) ->
-  retrieveConfig false, !!opts.mdebug, (mimosaConfig) ->
-    clean = require './clean'
-    _callIfModuleIncluded mimosaConfig, opts, clean.bowerClean
-
-registerCommand = (program, retrieveConfig) ->
   program
     .command('bower')
     .option("-D, --mdebug", "run in debug mode")
     .description("Run bower install")
     .action (opts) ->
-      _prepBowerInstall retrieveConfig, opts
+      retrieveConfigOpts =
+        buildFirst: false
+        mdebug: !!opts.mdebug
+      retrieveConfig retrieveConfigOpts, (mimosaConfig) ->
+        install = require './install'
+        _callIfModuleIncluded mimosaConfig, opts, install.bowerInstall
 
   program
     .command('bower:install <names>')
@@ -67,7 +55,13 @@ registerCommand = (program, retrieveConfig) ->
     .description("Install a library and update the bower.json accordingly")
     .action (names, opts) ->
       names = names.split(',')
-      _prepBowerLibraryInstall retrieveConfig, names, opts
+      opts.names = names
+      retrieveConfigOpts =
+        buildFirst: false
+        mdebug: !!opts.mdebug
+      retrieveConfig retrieveConfigOpts, (mimosaConfig) ->
+        install = require './install'
+        _callIfModuleIncluded mimosaConfig, opts, install.installLibrary
 
   program
     .command('bower:clean')
@@ -75,7 +69,12 @@ registerCommand = (program, retrieveConfig) ->
     .option("-D, --mdebug", "run in debug mode")
     .description("Removes all discoverable installed bower modules from source code and removes temp directory.")
     .action (opts) ->
-      _prepBowerClean retrieveConfig, opts
+      retrieveConfigOpts =
+        buildFirst: false
+        mdebug: !!opts.mdebug
+      retrieveConfig retrieveConfigOpts, (mimosaConfig) ->
+        clean = require './clean'
+        _callIfModuleIncluded mimosaConfig, opts, clean.bowerClean
 
 module.exports =
   registration:    registration
