@@ -57,6 +57,8 @@ If `bower.copy.trackChanges` is set to `false` and `bower.bowerDir.clean` is set
 
 If `bower.copy.trackChanges` is set to `false` and `bower.bowerDir.clean` is set to `true` (not recommended), then mimosa-bower has no way to determine if an install is necessary so the Bower functionality does not register itself to be run during `mimosa watch` and `mimosa build`. In this case it must be executed using the `mimosa bower` command.
 
+If `bower.copy.trackChanges` is set to `true` and `bower.bowerDir.clean` is set to `false`, then both Bower and mimosa-bower will attempt to keep track of when installs should be executed.  This is not recommended.  If you set `bower.bowerDir.clean` to `false`, then there is no need for mimosa-bower to keep track of libraries as Bower can do that using its own cached files.
+
 ### Where are assets initially copied?
 
 `bower.bowerDir.path` is the location where all of the package assets are initially copied by Bower. In most cases this include the entire contents of the GitHub repositories for the packages you have selected.
